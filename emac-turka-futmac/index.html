@@ -2,34 +2,82 @@
 <html lang="tr">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="description" content="FUTMAC - E-Mac Turka Fantazi Futbol Ligi haberleri, puan durumu ve köşe yazıları.">
   <title>FUTMAC - E-Mac Turka'nın Spor Gazetesi</title>
   <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/fixes.css">
   <script src="assets/js/app.js" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#icerik">İçeriğe geç</a>
   <div class="top-strip"><div class="wrap top-inner"><span>FUTMAC.COM</span><span>19 AĞUSTOS 2026 ÇARŞAMBA</span></div></div>
+
   <header class="header wrap">
-    <a class="brand" href="index.html" aria-label="FUTMAC ana sayfa"><img class="site-logo" src="assets/images/logo/emac-turka-transparent.png" alt="E-Mac Turka arması"><span class="wordmark">FUT<strong>MAC</strong><small>E-MAC TURKA'NIN SPOR GAZETESİ</small></span></a>
-    <div class="header-meta"><strong>SAYI: 001</strong><span>2026-2027 SEZONU</span></div><button class="menu-toggle" type="button" aria-expanded="false" aria-controls="ana-menu">MENÜ</button>
+    <a class="brand" href="index.html" aria-label="FUTMAC ana sayfa">
+      <img class="site-logo" src="assets/images/logo/emac-turka-transparent.png" alt="E-Mac Turka arması">
+      <span class="wordmark">FUT<strong>MAC</strong><small>E-MAC TURKA'NIN SPOR GAZETESİ</small></span>
+    </a>
+    <div class="header-meta"><strong>SAYI: 001</strong><span>2026-2027 SEZONU</span></div>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="ana-menu">MENÜ</button>
   </header>
-  <nav id="ana-menu" class="nav" aria-label="Ana menü"><div class="wrap nav-inner"><a class="active" href="index.html">ANA SAYFA</a><a href="#futbol">FUTBOL</a><a href="#emac">E-MAC</a><a href="kurallar.html">FANTAZİ</a><a href="#transfer">TRANSFER</a><a href="#yazarlar">KÖŞE YAZILARI</a><a href="arsiv.html">ARŞİV</a></div></nav>
+
+  <nav id="ana-menu" class="nav" aria-label="Ana menü"><div class="wrap nav-inner">
+    <a class="active" href="index.html">FUTBOL</a><a href="#emac">E-MAC LİGİ</a><a href="arsiv.html#puan">PUAN DURUMU</a><a href="arsiv.html">FİKSTÜR</a><a href="kurallar.html">FANTAZİ</a><a href="#transfer">TRANSFER</a><a href="#yazarlar">YAZARLAR</a>
+  </div></nav>
+
   <div class="breaking wrap"><strong>SON DAKİKA</strong><div class="ticker"><span>E-Mac Turka'da 2026-2027 sezon heyecanı başladı!</span><i>•</i><span>90 milyon TL bütçe sınırı yürürlükte.</span><i>•</i><span>FUTMAC özel dosyası yayında.</span></div></div>
-  <main id="icerik" class="wrap page">
-    <section id="futbol" aria-labelledby="manset"><div class="section-title"><h2 id="manset">GÜNÜN MANŞETİ</h2></div><div class="hero-grid">
-      <article class="hero"><a class="story-image story-image--hero" href="haber.html"><img src="assets/images/futbol-manset.svg" alt="Işıklar altında futbol sahası ve maç topu"><span>FUTMAC ÖZEL</span></a><div class="category">FUTBOL</div><h1><a href="haber.html">E-MAC'TE YENİ SEZON BAŞLIYOR!</a></h1><p>2026-2027 fantazi futbol sezonunda fikstür, transfer bütçesi ve rekabet yeniden şekilleniyor. Açılış haftasının bütün başlıkları FUTMAC dosyasında.</p><a class="read-more" href="haber.html">HABERİN DEVAMI »</a></article>
-      <div class="side-news"><article class="small-news"><img src="assets/images/futbol-fikstur.svg" alt="Futbol fikstürü grafiği"><div><div class="category">E-MAC</div><h2><a href="haber.html">İlk haftanın fikstürü belli oldu</a></h2><p>Teknik direktörlerin açılış eşleşmeleri...</p></div></article><article class="small-news"><img src="assets/images/futbol-kadro.svg" alt="Futbol taktik tahtası"><div><div class="category">FANTAZİ</div><h2><a href="kurallar.html">Kadro kurarken 90 milyon sınırı</a></h2><p>Bütçe aşımının yaptırımı 20 fantazi puanı...</p></div></article><article class="small-news"><img src="assets/images/futbol-transfer.svg" alt="Transfer okları ve futbol topu"><div><div class="category">TRANSFER</div><h2><a href="haber.html">Transfer piyasasında hareketli saatler</a></h2><p>Sezon öncesi öne çıkan hamleler...</p></div></article></div>
-    </div></section>
-    <div class="columns"><section class="main-column" id="emac" aria-labelledby="son-haberler"><div class="section-title section-title--bar"><h2 id="son-haberler">SON HABERLER</h2></div>
-      <article class="list-news"><img src="assets/images/futbol-derbi.svg" alt="Derbi maçını simgeleyen iki forma"><div><div class="date">14:32 | E-MAC</div><h2><a href="kurallar.html#derbi">Derbi maçlarına özel puan uygulaması</a></h2><p>İlan edilen derbinin galibine +30, mağlubuna -40 fantazi puanı uygulanacak.</p></div></article>
-      <article class="list-news"><img src="assets/images/futbol-kadro.svg" alt="Futbol taktik tahtası"><div><div class="date">14:10 | FANTAZİ</div><h2><a href="haber.html">Haftanın kadroları belli oluyor</a></h2><p>Teknik direktörler 90 milyon TL bütçe içinde ilk on birlerini şekillendiriyor.</p></div></article>
-      <article class="list-news" id="transfer"><img src="assets/images/futbol-transfer.svg" alt="Transfer grafiği"><div><div class="date">13:47 | TRANSFER</div><h2><a href="haber.html">Günün transfer dosyası</a></h2><p>Fiyat-performans oyuncuları ve kadro dengesine ilişkin son notlar.</p></div></article>
-      <article class="list-news"><img src="assets/images/futbol-odul.svg" alt="Kupa ve ödül grafiği"><div><div class="date">12:20 | MACATON</div><h2><a href="kurallar.html#oduller">Haftalık ve aylık ödüllerin ayrıntıları</a></h2><p>En iyi oyuncu, sürpriz oyuncu, haftanın takımı ve Ayın Takımı seçimi.</p></div></article>
-    </section><aside class="sidebar"><div class="section-title"><h2>PUAN DURUMU</h2></div><div class="table-wrap"><table class="standings"><thead><tr><th>#</th><th>TAKIM</th><th>O</th><th>P</th></tr></thead><tbody><tr><td>1</td><td><span class="team"><i class="crest fb">FB</i>Fenerbahçe</span></td><td>3</td><td>9</td></tr><tr><td>2</td><td><span class="team"><i class="crest gs">GS</i>Galatasaray</span></td><td>3</td><td>9</td></tr><tr><td>3</td><td><span class="team"><i class="crest bjk">BJK</i>Beşiktaş</span></td><td>3</td><td>6</td></tr><tr><td>4</td><td><span class="team"><i class="crest ts">TS</i>Trabzonspor</span></td><td>3</td><td>4</td></tr><tr><td>5</td><td><span class="team"><i class="crest ib">İB</i>Başakşehir</span></td><td>3</td><td>4</td></tr><tr><td>6</td><td><span class="team"><i class="crest ss">S</i>Samsunspor</span></td><td>3</td><td>4</td></tr></tbody></table></div><a class="sidebar-link" href="arsiv.html#puan">TÜM PUAN DURUMU »</a><p class="prototype-note">Puanlar prototip gösterimidir.</p><div class="section-title space"><h2>EN ÇOK OKUNANLAR</h2></div><ol class="popular"><li><b>1</b><a href="haber.html">Yeni sezonun ilk büyük manşeti</a></li><li><b>2</b><a href="kurallar.html#butce">90 milyon TL bütçe rehberi</a></li><li><b>3</b><a href="kurallar.html#derbi">Derbide puanlar nasıl değişecek?</a></li><li><b>4</b><a href="kurallar.html#oduller">Şampiyonluk ödülünün şartları</a></li></ol></aside></div>
-    <section id="yazarlar" class="writers-area" aria-labelledby="kose"><div class="section-title section-title--bar"><h2 id="kose">KÖŞE YAZILARI</h2></div><div class="writers"><article class="writer-card"><img src="assets/images/yazarlar/furkan-katilmis-2.png" alt="Furkan Katılmış"><div><span>FURKAN KATILMIŞ</span><h2><a href="haber.html">E-MAC'TE YENİ DÖNEM</a></h2><p>Sezon başlamadan önce E-Mac Turka'nın gündemine kısa bir bakış...</p><a class="read-more" href="haber.html">DEVAMINI OKU »</a></div></article><article class="writer-card"><img src="assets/images/yazarlar/eray.png" alt="Eray"><div><span>ERAY</span><h2><a href="haber.html">HAFTANIN TAKTİK ANALİZİ</a></h2><p>Açılış eşleşmelerini ve kadro tercihlerini inceliyoruz...</p><a class="read-more" href="haber.html">DEVAMINI OKU »</a></div></article></div></section>
-    <section class="regulation-banner"><img src="assets/images/logo/emac-turka-transparent.png" alt=""><div><span>2026-2027 RESMÎ MEVZUATI</span><h2>19 madde, tek rehber</h2><p>Maç sistemi, bütçe, ödüller, derbiler ve yönetim esasları.</p></div><a href="kurallar.html">MEVZUATI İNCELE</a></section>
+
+  <main id="icerik" class="wrap page portal-home">
+    <section class="portal-leads" aria-label="Öne çıkan haberler">
+      <article><h2><a href="haber.html">İyi ki varsın E-Mac...</a></h2><p>Rekabetin, dostluğun ve fantazi futbol heyecanının yeni sezonu başlıyor.</p></article>
+      <article class="portal-lead-photo"><img src="assets/images/yazarlar/furkan-katilmis-2.png" alt="Furkan Katılmış"><div><h2><a href="haber.html">Sezon öncesi son notlar</a></h2><p>Bütçe disiplini bu yıl kaderi belirleyecek.</p></div></article>
+      <article><h2><a href="kurallar.html">Takımını kur, kuralları bil</a></h2><p>Yeni mevzuatın en önemli 19 maddesi tek rehberde toplandı.</p></article>
+      <article class="portal-lead-photo"><img src="assets/images/yazarlar/eray.png" alt="Eray"><div><h2><a href="haber.html">“90 milyon yetiyor mu?”</a></h2><p>Eray'dan açılış haftası için taktik önerileri.</p></div></article>
+    </section>
+
+    <section id="yazarlar" class="portal-writers" aria-labelledby="yazarlar-baslik">
+      <h2 id="yazarlar-baslik" class="sr-only">Köşe yazarları</h2>
+      <article><div><strong>Furkan KATILMIŞ</strong><span>YAZARLAR</span><a href="haber.html">E-Mac'te yeni dönem...</a></div><img src="assets/images/yazarlar/furkan-katilmis-2.png" alt=""></article>
+      <article><div><strong>Eray</strong><span>YAZARLAR</span><a href="haber.html">Haftanın taktik analizi...</a></div><img src="assets/images/yazarlar/eray.png" alt=""></article>
+      <article><div><strong>Furkan KATILMIŞ</strong><span>YAZARLAR</span><a href="haber.html">Bütçe savaşı başlıyor...</a></div><img src="assets/images/yazarlar/furkan-katilmis.png" alt=""></article>
+      <article><div><strong>FUTMAC Servisi</strong><span>ÖZEL HABER</span><a href="kurallar.html">Mevzuatın kısa özeti...</a></div><img src="assets/images/logo/emac-turka-transparent.png" alt=""></article>
+    </section>
+
+    <div class="portal-layout">
+      <aside class="portal-left" aria-label="Site bölümleri">
+        <div class="portal-box-title">E-MAC TURKA</div>
+        <nav>
+          <a href="index.html">› Ana Sayfa</a><a href="arsiv.html">› Fikstür</a><a href="arsiv.html#puan">› Puan Durumu</a><a href="#yazarlar">› Köşe Yazıları</a><a href="kurallar.html">› Lig Mevzuatı</a><a href="#transfer">› Transfer</a><a href="kurallar.html#derbi">› Derbi</a><a href="kurallar.html#oduller">› Ödüller</a>
+        </nav>
+        <div class="portal-box-title portal-box-title--grey">HIZLI ERİŞİM</div>
+        <a class="portal-promo" href="kurallar.html"><img src="assets/images/logo/emac-turka-transparent.png" alt=""><strong>2026-2027<br>RESMÎ MEVZUAT</strong><span>19 MADDE »</span></a>
+      </aside>
+
+      <section class="portal-stream" id="emac" aria-labelledby="gundem-baslik">
+        <header class="portal-stream-head"><span>FUTMAC</span><h1 id="gundem-baslik">GÜNDEM</h1><a href="arsiv.html">TÜMÜ »</a></header>
+
+        <article class="portal-main-story">
+          <a href="haber.html"><img src="assets/images/futbol-manset.svg" alt="Futbol sahası ve top"></a>
+          <div><span>FUTMAC ÖZEL</span><h2><a href="haber.html">E-MAC'TE YENİ SEZON BAŞLIYOR!</a></h2><p>2026-2027 fantazi futbol sezonunda fikstür, transfer bütçesi ve rekabet yeniden şekilleniyor. Açılış haftasının bütün başlıkları FUTMAC dosyasında.</p><a class="portal-more" href="haber.html">Haberi oku »</a></div>
+        </article>
+
+        <article class="portal-news"><img src="assets/images/futbol-fikstur.svg" alt="Fikstür"><div><span>FİKSTÜR</span><h2><a href="arsiv.html">İlk haftanın eşleşmeleri belli oldu</a></h2><p>Teknik direktörleri zorlu bir açılış haftası bekliyor. Günün maç programı ve ilk değerlendirmeler...</p></div></article>
+        <article class="portal-news"><img src="assets/images/futbol-kadro.svg" alt="Taktik tahta"><div><span>FANTAZİ</span><h2><a href="kurallar.html#butce">Kadro kurarken 90 milyon sınırı</a></h2><p>Bütçe aşımında uygulanacak yaptırım ve doğru kadro dengesinin ayrıntıları...</p></div></article>
+        <article class="portal-news" id="transfer"><img src="assets/images/futbol-transfer.svg" alt="Transfer"><div><span>TRANSFER</span><h2><a href="haber.html">Transfer piyasasında hareketli saatler</a></h2><p>Sezon öncesi fiyat-performans oyuncuları ve teknik direktörlerin son hamleleri...</p></div></article>
+        <article class="portal-news"><img src="assets/images/futbol-derbi.svg" alt="Derbi"><div><span>DERBİ</span><h2><a href="kurallar.html#derbi">Derbide puanlar nasıl değişecek?</a></h2><p>Galibiyete +30, mağlubiyete -40 fantazi puanı uygulanacak. İşte özel haftanın kuralları...</p></div></article>
+        <article class="portal-news"><img src="assets/images/futbol-odul.svg" alt="Kupa"><div><span>MACATON</span><h2><a href="kurallar.html#oduller">Haftalık ve aylık ödüllerin ayrıntıları</a></h2><p>En iyi oyuncu, sürpriz oyuncu, haftanın takımı ve Ayın Takımı seçimi...</p></div></article>
+      </section>
+
+      <aside class="portal-right">
+        <section class="portal-widget"><h2>PUAN DURUMU</h2><table><thead><tr><th>#</th><th>TAKIM</th><th>P</th></tr></thead><tbody><tr><td>1</td><td>Fenerbahçe</td><td>9</td></tr><tr><td>2</td><td>Galatasaray</td><td>9</td></tr><tr><td>3</td><td>Beşiktaş</td><td>6</td></tr><tr><td>4</td><td>Trabzonspor</td><td>4</td></tr><tr><td>5</td><td>Başakşehir</td><td>4</td></tr></tbody></table><a href="arsiv.html#puan">Tüm tablo »</a></section>
+        <section class="portal-widget"><h2>SON DAKİKA</h2><ul><li><time>14:32</time><a href="kurallar.html#derbi">Derbi uygulaması açıklandı</a></li><li><time>14:10</time><a href="haber.html">Kadrolar belli oluyor</a></li><li><time>13:47</time><a href="haber.html">Transferde sıcak saatler</a></li></ul></section>
+        <a class="portal-ad" href="kurallar.html"><small>FUTMAC SUNAR</small><strong>CANLI<br>SONUÇLAR</strong><img src="assets/images/futbol-derbi.svg" alt=""><span>MAÇ MERKEZİ »</span></a>
+        <section class="portal-widget"><h2>ÇOK OKUNANLAR</h2><ol><li><a href="haber.html">Yeni sezonun ilk büyük manşeti</a></li><li><a href="kurallar.html#butce">90 milyon TL bütçe rehberi</a></li><li><a href="kurallar.html#oduller">Şampiyonluk ödülünün şartları</a></li></ol></section>
+      </aside>
+    </div>
   </main>
+
   <footer><div class="wrap footer-inner"><img src="assets/images/logo/emac-turka-transparent.png" alt=""><div><strong>FUTMAC</strong><span>© 2026 E-Mac Turka'nın Spor Gazetesi</span></div><nav aria-label="Alt menü"><a href="index.html">Ana Sayfa</a><a href="arsiv.html">Arşiv</a><a href="kurallar.html">Mevzuat</a></nav></div></footer>
-</body></html>
+</body>
+</html>

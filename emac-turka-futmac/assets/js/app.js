@@ -1,7 +1,11 @@
-const fixes = document.createElement('link');
-fixes.rel = 'stylesheet';
-fixes.href = 'assets/css/fixes.css';
-document.head.append(fixes);
+const primaryNav = document.querySelector('.nav');
+if (primaryNav && !document.querySelector('.utility-nav')) {
+  const utilityNav = document.createElement('nav');
+  utilityNav.className = 'utility-nav';
+  utilityNav.setAttribute('aria-label', 'Hızlı bağlantılar');
+  utilityNav.innerHTML = '<div class="wrap"><a href="arsiv.html">FİKSTÜR</a><a href="arsiv.html#puan">PUAN DURUMU</a><a href="index.html#emac">HAFTANIN 11\'İ</a><a href="kurallar.html#derbi">DERBİ</a><a href="kurallar.html#oduller">MACATON</a><a href="kurallar.html">LİG MEVZUATI</a><a href="index.html#yazarlar">YAZARLAR</a></div>';
+  primaryNav.insertAdjacentElement('afterend', utilityNav);
+}
 
 const toggle = document.querySelector('.menu-toggle');
 const menu = document.querySelector('#ana-menu');
