@@ -1,38 +1,55 @@
 # FUTMAC - E-Mac Turka'nın Spor Gazetesi
 
-Kurulum gerektirmeyen, responsive bir fantazi futbol haber sitesi prototipidir.
+Kurulum gerektirmeyen, responsive ve backend bağlantısına hazır fantazi futbol haber sitesi frontend prototipidir.
 
 ## Açma
 
 1. Bu klasörü VS Code ile açın.
-2. `index.html` dosyasını tarayıcıda açın veya Live Server ile çalıştırın.
+2. `index.html` dosyasını Live Server ile çalıştırın.
+3. Ana sayfa tarayıcıda açıldığında bütün yerel sayfalar menülerden kullanılabilir.
 
-## Sayfalar
+Site `file://` ile de açılabilir. Veri katmanı JSON isteği yerine `assets/js/data.js` dosyasında tutulduğu için yerel tarayıcı kısıtlamalarına takılmaz.
 
-- `index.html`: Futbol haberleri, örnek puan durumu ve köşe yazarları
-- `haber.html`: Ayrıntılı sezon açılış haberi
-- `yazi-eray.html`: Eray'ın "Haftanın Taktik Analizi" köşe yazısı
-- `yazi-butce.html`: Furkan Katılmış'ın "Transfer Sınırı Başlıyor" köşe yazısı
-- `yazi-berkay.html`: Berkay Minkara'nın "Ligin Güncel Durumu" köşe yazısı
-- `kurallar.html`: PDF'deki 7 kısım ve 19 maddenin sadeleştirilmiş özeti
-- `arsiv.html`: Filtrelenebilir haber arşivi ve geniş puan tablosu
+## Başlıca sayfalar
 
-## Yerel dosyalar
+- `index.html`: Ana haber portalı
+- `futbol.html`, `emac-ligi.html`, `fantazi.html`, `transfer.html`: Haber kategorileri
+- `macaton.html`, `haftanin-11i.html`, `oduller.html`: Özel içerik kategorileri
+- `fikstur.html`: Hafta seçicili maç merkezi
+- `puan-durumu.html`: E-Mac örnek takım/yönetici puan tablosu
+- `yazarlar.html`: Yazar listesi
+- `yazar-furkan.html`, `yazar-eray.html`, `yazar-berkay.html`: Yazar profilleri
+- `arsiv.html`: Arama, kategori, yazar ve tarih filtreli arşiv
+- `kurallar.html`: 7 kısım ve 19 maddelik mevzuat özeti ve resmî PDF bağlantısı
+- `404.html`: Sayfa bulunamadı görünümü
+- `admin.html`: Yerel demo yönetici girişi ve haber yönetim paneli
+- `haber-onizleme.html`: Admin panelinde hazırlanan yerel içeriğin detay görünümü
 
-- Logo: `assets/images/logo/`
-- Yazar fotoğrafları: `assets/images/yazarlar/`
-- Futbol görselleri: `assets/images/futbol-*.svg`
-- Resmî mevzuat: `assets/docs/E-Mac_Turka_Fantazi_2026-2027_Lig_Mevzuati.pdf`
+## İçerik güncelleme
 
-Puan tablosundaki değerler prototip amaçlıdır. Mevzuat sayfası 20 Ağustos 2026 tarihli, 2/Basın-2026 sayılı mevzuatın hızlı başvuru özetidir; uyuşmazlık halinde PDF metni esas alınır.
+Örnek haberler, yazarlar, takımlar, puan durumu ve fikstür `assets/js/data.js` dosyasındadır. Backend geldiğinde aynı alanları API'den döndürüp bu veri nesnesinin yerine bağlamak yeterlidir.
 
-## Köşe yazarı fotoğrafını değiştirme
+## Admin paneli
 
-En kolay yöntem, yeni fotoğrafı aynı dosya adıyla `assets/images/yazarlar/` klasörüne kopyalayıp mevcut dosyanın üzerine yazmaktır:
+`admin.html` ekranında haber/köşe yazısı ekleme, düzenleme, silme, taslak/yayın durumu, kart önizlemesi ve JSON dışa aktarma bulunur. Panel iki çalışma biçimini destekler:
 
-- Furkan Katılmış ana fotoğrafı: `furkan-katilmis-2.png`
-- Furkan Katılmış ikinci fotoğrafı: `furkan-katilmis.png`
-- Eray fotoğrafı: `eray.png`
-- Berkay Minkara fotoğrafı: `berkay-minkara.jpg`
+- Varsayılan yerel demo: kurulum gerektirmez; içerikleri yalnızca aynı tarayıcıda saklar.
+- Supabase modu: gerçek kullanıcı girişi, ortak haber/taslak veritabanı ve kapak görseli yükleme sağlar.
 
-Fotoğrafların vesikalık oranında, tercihen 240 x 300 piksel veya daha büyük PNG/JPG olması önerilir. Dosya adı değişirse ilgili HTML sayfasındaki `src="assets/images/yazarlar/..."` değerini de yeni ada göre değiştirin.
+Supabase kurulumu için `SUPABASE_KURULUM.md` dosyasını izleyin. Başlangıç şeması ve Row Level Security kuralları `supabase/migrations/001_initial.sql` içindedir. Tarayıcı bağlantısı `assets/js/supabase-config.js` dosyasından açılır. `service_role` anahtarı frontend dosyalarına kesinlikle eklenmemelidir.
+
+Yazar fotoğrafları `assets/images/yazarlar/` klasöründedir:
+
+- Furkan Katılmış: `furkan-katilmis-2.png`
+- Eray: `eray.png`
+- Berkay Minkara: `berkay-minkara.jpg`
+
+Yeni fotoğraf aynı dosya adıyla mevcut görselin üzerine kopyalanabilir. En iyi sonuç için vesikalık oranında, en az 240 x 300 piksel bir görsel kullanın.
+
+## Mevzuat notu
+
+Mevzuat sayfası hızlı başvuru özetidir. Kaynak belgenin giriş paragrafında 14 Ağustos 2026, 18. maddesinde 20 Ağustos 2026 yürürlük tarihi bulunduğundan bu fark sayfada açıkça belirtilmiştir. Uyuşmazlık halinde resmî PDF ve lig yönetiminin açıklaması esas alınır.
+
+## Test
+
+Teslim sürümünde 30 HTML sayfası 320, 390, 768 ve 1440 piksel genişliklerde kontrol edilir. Kırık yerel bağlantı, kırık görsel, yatay taşma, başlık yapısı, mobil menü, arşiv filtreleri, fikstür durumları, puan tablosu ve admin giriş-yayın akışı test kapsamındadır.
