@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow"><meta name="description" content="FUTMAC yerel demo yönetim paneli.">
+  <title>Yönetim Paneli | FUTMAC</title>
+  <link rel="canonical" href="https://omerrklc.github.io/fantasy-league-ui-preview/emac-turka-futmac/admin.html">
+  <link rel="icon" href="assets/images/logo/emac-turka-transparent.png">
+  <link rel="stylesheet" href="assets/css/admin.css">
+  <script src="assets/js/supabase-config.js" defer></script>
+  <script src="assets/js/supabase-service.js" defer></script>
+  <script src="assets/js/admin.js" defer></script>
+</head>
+<body class="admin-body">
+  <a class="skip-link" href="#admin-main">İçeriğe geç</a>
+  <div class="admin-shell">
+    <header class="admin-top">
+      <img src="assets/images/logo/emac-turka-transparent.png" alt="E-Mac Turka arması">
+      <div><h1>FUTMAC YÖNETİM PANELİ</h1><p>Haber, köşe yazısı ve yayın akışı yönetimi</p></div>
+      <div class="admin-top__actions"><a class="admin-button admin-button--gold" href="index.html" target="_blank" rel="noopener">SİTEYİ GÖR</a><button class="admin-button admin-button--red" type="button" data-logout hidden>ÇIKIŞ</button></div>
+    </header>
+    <div class="admin-warning" role="status" data-backend-notice><strong>BAĞLANTI KONTROL EDİLİYOR:</strong> Yönetim paneli hazırlanıyor.</div>
+
+    <main id="admin-main">
+      <section class="admin-login" data-login-view aria-labelledby="login-title">
+        <h2 id="login-title">Yönetici girişi</h2>
+        <p data-login-description>Yönetim paneline erişmek için bilgilerinizi girin.</p>
+        <form data-login-form class="admin-login-grid">
+          <div class="admin-field"><label for="admin-email">E-posta</label><input id="admin-email" name="email" type="email" autocomplete="username" required placeholder="yonetici@ornek.com"></div>
+          <div class="admin-field"><label for="admin-password">Parola</label><input id="admin-password" name="password" type="password" autocomplete="current-password" minlength="6" required placeholder="En az 6 karakter"><small data-password-note>Bağlantı türü kontrol ediliyor.</small></div>
+          <button class="admin-button" type="submit" data-login-button>GİRİŞ YAP</button>
+          <p class="admin-message" data-login-message aria-live="polite"></p>
+        </form>
+      </section>
+
+      <section class="admin-dashboard" data-dashboard hidden>
+        <div class="admin-layout">
+          <nav class="admin-sidebar" aria-label="Yönetim bölümleri">
+            <strong>YÖNETİM</strong>
+            <button class="active" type="button" data-panel="articles">Haberler ve Yazılar</button>
+            <button type="button" data-panel="fixtures">Fikstür ve Skorlar</button>
+            <button type="button" data-panel="standings">Puan Durumu</button>
+            <button type="button" data-panel="authors">Yazarlar</button>
+            <button type="button" data-panel="settings">Ayarlar / Backend</button>
+            <small data-sidebar-mode>Bağlantı türü kontrol ediliyor.</small>
+          </nav>
+
+          <div class="admin-main">
+            <section data-panel-view="articles">
+              <header class="admin-section-head"><div><h2>Haberler ve Köşe Yazıları</h2><p>Taslak oluşturun, düzenleyin ve aynı tarayıcıdaki site önizlemesinde yayımlayın.</p></div><button class="admin-button" type="button" data-new-article>+ YENİ İÇERİK</button></header>
+              <div class="admin-stats"><article class="admin-stat"><span>TOPLAM</span><strong data-stat-total>0</strong></article><article class="admin-stat"><span>YAYINDA</span><strong data-stat-published>0</strong></article><article class="admin-stat"><span>TASLAK</span><strong data-stat-draft>0</strong></article><article class="admin-stat"><span>KATEGORİ</span><strong data-stat-category>0</strong></article></div>
+              <div class="admin-toolbar"><label class="sr-only" for="admin-search">İçeriklerde ara</label><input id="admin-search" type="search" placeholder="Başlık veya yazarda ara"><button class="admin-button admin-button--gold" type="button" data-export>JSON DIŞA AKTAR</button><label class="admin-button" for="admin-import">JSON İÇE AKTAR</label><input class="sr-only" id="admin-import" type="file" accept="application/json"></div>
+              <p class="admin-message" data-admin-message aria-live="polite"></p>
+              <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>BAŞLIK</th><th>KATEGORİ</th><th>YAZAR</th><th>DURUM</th><th>TARİH</th><th>İŞLEMLER</th></tr></thead><tbody data-article-table><tr><td colspan="6" class="admin-empty">Henüz yerel içerik yok.</td></tr></tbody></table></div>
+
+              <section class="admin-editor" data-editor hidden aria-labelledby="editor-title">
+                <form class="admin-form" data-article-form>
+                  <h3 id="editor-title" class="admin-field--wide">Yeni içerik</h3>
+                  <input type="hidden" name="id">
+                  <div class="admin-field admin-field--wide"><label for="article-title">Başlık</label><input id="article-title" name="title" maxlength="120" required></div>
+                  <div class="admin-field"><label for="article-slug">Kısa adres</label><input id="article-slug" name="slug" pattern="[a-z0-9-]+" required><small>Örnek: haftanin-transfer-haberi</small></div>
+                  <div class="admin-field"><label for="article-type">İçerik türü</label><select id="article-type" name="type"><option value="haber">Haber</option><option value="yazi">Köşe yazısı</option></select></div>
+                  <div class="admin-field"><label for="article-category">Kategori</label><select id="article-category" name="category" required><option value="futbol">Futbol</option><option value="emac">E-Mac Ligi</option><option value="fantazi">Fantazi</option><option value="transfer">Transfer</option><option value="yazarlar">Köşe Yazıları</option><option value="macaton">Macaton</option><option value="haftanin11">Haftanın 11’i</option><option value="oduller">Ödüller</option></select></div>
+                  <div class="admin-field"><label for="article-author">Yazar</label><select id="article-author" name="author"><option>FUTMAC Servisi</option><option>Furkan Katılmış</option><option>Eray</option><option>Berkay Minkara</option></select></div>
+                  <div class="admin-field admin-field--wide"><label for="article-excerpt">Spot metni</label><textarea id="article-excerpt" name="excerpt" maxlength="280" required></textarea></div>
+                  <div class="admin-field admin-field--wide"><label for="article-content">Haber metni</label><textarea id="article-content" name="content" minlength="20" required placeholder="Paragrafları boş satırla ayırabilirsiniz."></textarea></div>
+                  <div class="admin-field admin-field--wide"><label for="article-image">Görsel yolu veya adresi</label><input id="article-image" name="image" value="assets/images/futbol-manset.svg" required><small data-image-note>Yerel demoda yalnızca assets/images/ altındaki görseller kullanılabilir.</small></div>
+                  <div class="admin-field admin-field--wide" data-image-upload-wrap hidden><label for="article-image-file">Yeni kapak görseli yükle</label><input id="article-image-file" type="file" accept="image/jpeg,image/png,image/webp"><button class="admin-button" type="button" data-upload-image>GÖRSELİ YÜKLE</button><small>JPG, PNG veya WebP; en fazla 5 MB.</small></div>
+                  <div class="admin-field"><label for="article-date">Yayın tarihi</label><input id="article-date" name="date" type="date" required></div>
+                  <div class="admin-field"><label for="article-time">Yayın saati</label><input id="article-time" name="time" type="time" required></div>
+                  <div class="admin-field"><label for="article-status">Durum</label><select id="article-status" name="status"><option value="draft">Taslak</option><option value="published">Yayında</option></select></div>
+                  <div class="admin-field"><label for="article-read-time">Okuma süresi</label><input id="article-read-time" name="readTime" value="3 dk" maxlength="12"></div>
+                  <div class="admin-form-actions"><button class="admin-button" type="submit">KAYDET</button><button class="admin-button admin-button--gold" type="button" data-preview>ÖNİZLE</button><button class="admin-button admin-button--red" type="button" data-cancel>DÜZENLEMEYİ KAPAT</button></div>
+                </form>
+                <aside class="admin-preview" aria-live="polite"><h3>KART ÖNİZLEMESİ</h3><img data-preview-image src="assets/images/futbol-manset.svg" alt="Haber görseli önizlemesi"><small data-preview-category>FUTBOL</small><strong data-preview-title>Haber başlığı</strong><p data-preview-excerpt>Spot metni burada görünecek.</p></aside>
+              </section>
+            </section>
+
+            <section data-panel-view="fixtures" hidden><div class="admin-placeholder"><h3>Fikstür ve skor yönetimi</h3><p>Bu bölümün ekranı hazırlandı. Kalıcı ve ortak skor güncellemesi için Supabase veritabanı bağlantısı gereklidir. Şimdilik örnek fikstür <code>assets/js/data.js</code> dosyasından yönetilir.</p><a class="admin-button" href="fikstur.html" target="_blank" rel="noopener">MAÇ MERKEZİNİ GÖR</a></div></section>
+            <section data-panel-view="standings" hidden><div class="admin-placeholder"><h3>Puan durumu yönetimi</h3><p>Gerçek puan tablosu güncellemeleri backend yetkilendirmesi ve doğrulama kurallarıyla bağlanacaktır.</p><a class="admin-button" href="puan-durumu.html" target="_blank" rel="noopener">PUAN DURUMUNU GÖR</a></div></section>
+            <section data-panel-view="authors" hidden><div class="admin-placeholder"><h3>Yazar yönetimi</h3><p>Yazar profilleri mevcut frontend verisinden gösterilir. Yeni yazar ekleme ve fotoğraf yükleme Supabase Storage bağlantısından sonra etkinleştirilecektir.</p><a class="admin-button" href="yazarlar.html" target="_blank" rel="noopener">YAZARLARI GÖR</a></div></section>
+            <section data-panel-view="settings" hidden><div class="admin-placeholder"><h3 data-settings-title>Backend bağlantı durumu</h3><p data-settings-status>Bağlantı kontrol ediliyor.</p><ul><li>Supabase Auth: gerçek yönetici oturumu</li><li>PostgreSQL: ortak haber ve taslak verileri</li><li>Storage: kapak görselleri</li><li>RLS: editör/admin rolüne göre yazma yetkisi</li></ul><a class="admin-button" href="SUPABASE_KURULUM.md" target="_blank" rel="noopener">KURULUM REHBERİ</a></div></section>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</body></html>
