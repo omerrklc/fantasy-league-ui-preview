@@ -12,7 +12,7 @@ Kurulum gerektirmeyen, responsive bir fantazi futbol haber sitesi prototipidir.
 - `index.html`: Futbol haberleri, örnek puan durumu ve köşe yazarları
 - `haber.html`: Ayrıntılı sezon açılış haberi
 - `yazi-eray.html`: Eray'ın "Haftanın Taktik Analizi" köşe yazısı
-- `yazi-butce.html`: Furkan Katılmış'ın "Bütçe Savaşı Başlıyor" köşe yazısı
+- `yazi-butce.html`: Furkan Katılmış'ın "Transfer Sınırı Başlıyor" köşe yazısı
 - `yazi-berkay.html`: Berkay Minkara'nın "Ligin Güncel Durumu" köşe yazısı
 - `kurallar.html`: PDF'deki 7 kısım ve 19 maddenin sadeleştirilmiş özeti
 - `arsiv.html`: Filtrelenebilir haber arşivi ve geniş puan tablosu
@@ -24,7 +24,7 @@ Kurulum gerektirmeyen, responsive bir fantazi futbol haber sitesi prototipidir.
 - Futbol görselleri: `assets/images/futbol-*.svg`
 - Resmî mevzuat: `assets/docs/E-Mac_Turka_Fantazi_2026-2027_Lig_Mevzuati.pdf`
 
-Puan tablosundaki değerler prototip amaçlıdır. Mevzuat sayfası hızlı başvuru özetidir; uyuşmazlık halinde PDF metni esas alınır.
+Puan tablosundaki değerler prototip amaçlıdır. Mevzuat sayfası 20 Ağustos 2026 tarihli, 2/Basın-2026 sayılı mevzuatın hızlı başvuru özetidir; uyuşmazlık halinde PDF metni esas alınır.
 
 ## Köşe yazarı fotoğrafını değiştirme
 
