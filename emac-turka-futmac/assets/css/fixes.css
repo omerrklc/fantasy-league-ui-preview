@@ -420,3 +420,69 @@ footer { background:#171817; border-top:4px solid var(--red); }
   .portal-right { grid-template-columns:1fr; }
   .portal-ad { grid-row:auto; }
 }
+
+/* 2026-08-20 revizyonu: FUTMAC'in genel temasini E-Mac yesiline tasir. */
+:root { --red:#075b35; --red-dark:#043b22; --blue:#0b6b42; }
+body {
+  background-color:#cbd7ce;
+  background-image:linear-gradient(rgba(255,255,255,.76),rgba(255,255,255,0) 180px),repeating-linear-gradient(0deg,rgba(4,59,34,.025) 0,rgba(4,59,34,.025) 1px,transparent 1px,transparent 3px);
+}
+.wordmark strong { color:#075b35; }
+.top-inner span:first-child,.header-meta strong { color:#075b35; }
+.nav { background:linear-gradient(#15764b 0,#075b35 49%,#043b22 51%,#07502f 100%); border-color:#032e1a; border-top-color:#4b9a74; }
+.nav a { border-right-color:#03341d; text-shadow:0 -1px #022d19; }
+.nav a:hover,.nav a:focus-visible,.nav a.active { background:linear-gradient(#1a4d36,#062b1b); }
+.utility-nav { background:linear-gradient(#f3f8f4,#d7e5da); }
+.utility-nav a:hover { color:#075b35; }
+.breaking strong,.portal-stream-head,.portal-widget h2,.column-label {
+  background:linear-gradient(#15764b,#06462a); border-color:#04371f; text-shadow:0 -1px #022b18;
+}
+.ticker i,.category,.date,.read-more,.sidebar-link,.portal-more,.archive-header>span { color:#075b35; }
+.page { background:#edf3ee; }
+.section-title { background:linear-gradient(#35664e,#173e2b); border-color:#102d20; border-top-color:#6e9b83; }
+.section-title--bar,.portal-box-title { background:linear-gradient(#1e7650,#0a4d30); border-color:#063a24; border-top-color:#58a17d; }
+.portal-leads article,.portal-writers article,.list-news,.column-article,.rule-cards article,.rule-sections section,.archive-list {
+  background:linear-gradient(#fbfdfb,#e3eee6);
+}
+.portal-writers article { border-top-color:#075b35; }
+.portal-writers strong,.portal-writers a:hover,.portal-main-story span,.portal-news span,.archive-list span { color:#075b35; }
+.portal-writers span { background:#075b35; }
+.portal-left nav a { background:#0e6640; border-bottom-color:#438565; }
+.portal-left nav a:hover { background:#043b22; }
+.portal-promo span,.portal-widget>a,.portal-widget time,.portal-widget ol li:before { color:#075b35; }
+.portal-stream,.portal-widget,.side-news,.sidebar { background:#dde9df; }
+.portal-main-story { background:#e3eee6; }
+.portal-news { background:#f8fbf8; }
+.portal-news:nth-of-type(odd) { background:#eef5ef; }
+.portal-ad { border-color:#0c6b43; }
+.portal-ad span,.regulation-banner>a,.pdf-button { background:linear-gradient(#16764b,#06462a); border-color:#04371f; }
+.column-author { background:linear-gradient(#edf5ef,#d9e8dd); }
+.column-author h2,.column-signature span { color:#075b35; }
+.column-body blockquote { border-left-color:#075b35; background:#e4eee6; }
+.rules-hero { border-bottom-color:#168055; }
+.rule-cards article { border-top-color:#075b35; }
+.rule-cards span,.rule-sections article>b { color:#075b35; }
+.rule-nav { background:#17402d; border-top-color:#168055; }
+.rule-sections header { background:linear-gradient(#35664e,#173e2b); border-bottom-color:#168055; }
+.filters button { color:#075b35; border-color:#075b35; }
+.filters button.active,.filters button:hover { background:#075b35; }
+.archive-list { border-top-color:#075b35; }
+.archive-list time { color:#075b35; }
+footer { border-top-color:#168055; }
+
+.budget-rule-highlight {
+  display:grid; grid-template-columns:165px 1fr auto; gap:10px; align-items:center;
+  margin-bottom:6px; padding:8px 10px; color:#fff;
+  background:linear-gradient(#13744a,#06442a); border:1px solid #03351f;
+  border-left:7px solid #d4aa3b; box-shadow:inset 0 1px rgba(255,255,255,.2);
+}
+.budget-rule-highlight:hover { color:#fff; text-decoration:none; background:linear-gradient(#178656,#075332); }
+.budget-rule-highlight strong { font:900 15px/1 Arial,Helvetica,sans-serif; }
+.budget-rule-highlight span { font-size:9px; line-height:1.3; }
+.budget-rule-highlight b { padding:5px 7px; color:#163c29; background:#e5c25f; font-size:8px; white-space:nowrap; }
+.budget-rule-highlight--rules { margin:8px 0; }
+
+@media (max-width:600px) {
+  .budget-rule-highlight { grid-template-columns:1fr; gap:4px; }
+  .budget-rule-highlight b { width:max-content; }
+}
