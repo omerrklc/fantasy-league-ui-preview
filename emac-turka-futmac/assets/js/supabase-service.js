@@ -117,6 +117,20 @@
     if (result.error) throw result.error;
   }
 
+  async function requestPasswordReset(email) {
+    const client = await getClient();
+    const redirectTo = new URL('sifre-yenile.html', window.location.href).href;
+    const result = await client.auth.resetPasswordForEmail(email, { redirectTo: redirectTo });
+    if (result.error) throw result.error;
+  }
+
+  async function updatePassword(password) {
+    const client = await getClient();
+    const result = await client.auth.updateUser({ password: password });
+    if (result.error) throw result.error;
+    return result.data.user;
+  }
+
   async function listArticles(options) {
     const client = await getClient();
     let query = client.from('articles').select('*').order('published_at', { ascending: false, nullsFirst: false }).order('updated_at', { ascending: false });
@@ -124,6 +138,76 @@
     const result = await query;
     if (result.error) throw result.error;
     return result.data.map(rowToArticle);
+  }
+
+  function optionalRows(result) {
+    if (!result.error) return result.data;
+    const message = String(result.error.message || '');
+    if (['PGRST205', '42P01'].includes(result.error.code) || message.includes('schema cache') || message.includes('does not exist')) return null;
+    throw result.error;
+  }
+
+  async function listAuthors() {
+    const client = await getClient();
+    const rows = optionalRows(await client.from('authors').select('*').order('sort_order').order('name'));
+    if (rows === null) return null;
+    return rows.map(function (row) {
+      const profiles = { furkan:'yazar-furkan.html', eray:'yazar-eray.html', berkay:'yazar-berkay.html' };
+      return { id: row.slug, name: row.name, role: row.role, bio: row.bio, image: row.image_url, active: row.is_active, sortOrder: row.sort_order, profile: profiles[row.slug] || 'yazarlar.html' };
+    });
+  }
+
+  async function listTeams() {
+    const client = await getClient();
+    const rows = optionalRows(await client.from('league_teams').select('*').order('sort_order').order('name'));
+    if (rows === null) return null;
+    return rows.map(function (row) { return { id: row.id, name: row.name, manager: row.manager, shortName: row.short_name || '', active: row.is_active, sortOrder: row.sort_order }; });
+  }
+
+  async function listStandings() {
+    const client = await getClient();
+    const rows = optionalRows(await client.from('standings').select('team_id,played,won,drawn,lost,fantasy_points,league_points,movement,form,updated_at,team:league_teams!standings_team_id_fkey(id,name,manager,sort_order)'));
+    if (rows === null) return null;
+    rows.sort(function (a, b) { return b.league_points - a.league_points || b.fantasy_points - a.fantasy_points || (a.team.sort_order || 0) - (b.team.sort_order || 0); });
+    return rows.map(function (row, index) { return { rank: index + 1, teamId: row.team_id, team: row.team.name, manager: row.team.manager, played: row.played, won: row.won, drawn: row.drawn, lost: row.lost, fantasy: row.fantasy_points, points: row.league_points, change: row.movement, form: row.form || [], updatedAt: row.updated_at }; });
+  }
+
+  async function listFixtures() {
+    const client = await getClient();
+    const rows = optionalRows(await client.from('fixtures').select('id,week,kickoff_at,status,home_score,away_score,home:league_teams!fixtures_home_team_id_fkey(id,name),away:league_teams!fixtures_away_team_id_fkey(id,name)').order('week').order('kickoff_at'));
+    if (rows === null) return null;
+    const weeks = {};
+    rows.forEach(function (row) {
+      const kickoff = new Date(row.kickoff_at);
+      if (!weeks[row.week]) weeks[row.week] = [];
+      weeks[row.week].push({ id: row.id, week: row.week, homeTeamId: row.home.id, awayTeamId: row.away.id, home: row.home.name, away: row.away.name, kickoffAt: row.kickoff_at, date: new Intl.DateTimeFormat('tr-TR', { day:'numeric', month:'long', year:'numeric' }).format(kickoff), time: kickoff.toLocaleTimeString('tr-TR', { hour:'2-digit', minute:'2-digit' }), status: row.status, homeScore: row.home_score, awayScore: row.away_score });
+    });
+    return weeks;
+  }
+
+  async function saveFixture(fixture) {
+    const client = await getClient();
+    const row = { week: fixture.week, home_team_id: fixture.homeTeamId, away_team_id: fixture.awayTeamId, kickoff_at: fixture.kickoffAt, status: fixture.status, home_score: fixture.status === 'scheduled' ? null : fixture.homeScore, away_score: fixture.status === 'scheduled' ? null : fixture.awayScore };
+    if (fixture.id) row.id = fixture.id;
+    const result = row.id ? await client.from('fixtures').update(row).eq('id', row.id).select().single() : await client.from('fixtures').insert(row).select().single();
+    if (result.error) throw result.error;
+    return result.data;
+  }
+
+  async function deleteFixture(id) {
+    const client = await getClient(); const result = await client.from('fixtures').delete().eq('id', id); if (result.error) throw result.error;
+  }
+
+  async function saveStanding(item) {
+    const client = await getClient();
+    const row = { team_id:item.teamId, played:item.played, won:item.won, drawn:item.drawn, lost:item.lost, fantasy_points:item.fantasy, league_points:item.points, movement:item.change, form:item.form };
+    const result = await client.from('standings').upsert(row, { onConflict:'team_id' }).select().single(); if (result.error) throw result.error; return result.data;
+  }
+
+  async function saveAuthor(author) {
+    const client = await getClient();
+    const row = { slug:author.id, name:author.name, role:author.role, bio:author.bio, image_url:author.image, is_active:author.active, sort_order:author.sortOrder };
+    const result = await client.from('authors').upsert(row, { onConflict:'slug' }).select().single(); if (result.error) throw result.error; return result.data;
   }
 
   async function saveArticle(article) {
@@ -159,8 +243,12 @@
   }
 
   window.FUTMAC_SUPABASE = Object.freeze({
-    enabled: enabled(), getClient: getClient, getSession: getSession, signIn: signIn,
-    signOut: signOut, listArticles: listArticles, saveArticle: saveArticle,
-    deleteArticle: deleteArticle, uploadImage: uploadImage
+    enabled: enabled(), leagueManagementEnabled: config.leagueManagementEnabled === true,
+    getClient: getClient, getSession: getSession, signIn: signIn,
+    signOut: signOut, requestPasswordReset: requestPasswordReset, updatePassword: updatePassword,
+    listArticles: listArticles, saveArticle: saveArticle, deleteArticle: deleteArticle,
+    listAuthors: listAuthors, listTeams: listTeams, listStandings: listStandings, listFixtures: listFixtures,
+    saveFixture: saveFixture, deleteFixture: deleteFixture, saveStanding: saveStanding, saveAuthor: saveAuthor,
+    uploadImage: uploadImage
   });
 }());
