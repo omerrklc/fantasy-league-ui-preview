@@ -32,15 +32,8 @@
 - Geçerli ve geçersiz parola yenileme bağlantısı durumları: başarılı
 - RLS, son-admin, sistem-kategori, takım-silme ve Storage politika kontrolleri: başarılı statik doğrulama
 
-## Canlı Supabase için kalan tek seferlik işlem
+## Canlı Supabase durumu
 
-Canlı projede `articles` ve `categories` tabloları çalışıyor; `authors`, `league_teams`, `standings` ve `fixtures` tabloları henüz oluşturulmamış durumda. Bu nedenle `assets/js/supabase-config.js` içindeki `leagueManagementEnabled` değeri güvenli biçimde `false` tutulmuştur.
+`supabase/migrations/002_league_management.sql` canlı projeye uygulandı. `authors`, `league_teams`, `standings`, `fixtures` ve gelişmiş kategori alanları REST API üzerinden başarıyla doğrulandı. `assets/js/supabase-config.js` içindeki `leagueManagementEnabled` değeri açıldı; admin panelindeki yazar, takım, fikstür, puan durumu ve kategori araçları artık ortak canlı veritabanını kullanır.
 
-Lig yönetimini açmak için:
-
-1. Supabase SQL Editor içinde `supabase/migrations/002_league_management.sql` dosyasının tamamını çalıştırın.
-2. Dört yeni tablonun oluştuğunu doğrulayın.
-3. Auth URL Configuration bölümünde `sifre-yenile.html` adresinin Redirect URLs listesinde olduğunu doğrulayın.
-4. Ardından `leagueManagementEnabled` değerini `true` yapıp siteyi yeniden yayınlayın.
-
-Bu işlem yapılana kadar canlı haber yayınlama çalışmaya devam eder; fikstür, puan durumu, yazar ve takım sayfaları sabit örnek verileri kullanır.
+Auth URL Configuration bölümünde `sifre-yenile.html` adresi Redirect URLs listesinde tutulmalıdır.
