@@ -221,7 +221,7 @@
       try { article = JSON.parse(sessionStorage.getItem('futmac_admin_preview_v1') || 'null'); } catch (error) { article = null; }
     } else {
       const id = params.get('id');
-      article = data.articles.find(function (item) { return (item.local || item.remote) && item.id === id; }) || null;
+      article = data.articles.find(function (item) { return (item.local || item.remote || item.dynamic) && item.id === id; }) || null;
     }
     if (!article) {
       container.innerHTML = '<nav class="breadcrumb" aria-label="İçerik yolu"><a href="index.html">Ana Sayfa</a><span>›</span><span>İçerik</span></nav><span class="news-kicker">BULUNAMADI</span><h1>İçerik bulunamadı</h1><p class="dek">Bu içerik silinmiş, taslak durumda veya henüz yayımlanmamış olabilir.</p><p><a class="pdf-button" href="admin.html">YÖNETİM PANELİNE DÖN</a></p>';
@@ -238,7 +238,7 @@
     const stream = document.querySelector('.portal-stream');
     if (!stream || !data) return;
     const mainStory = stream.querySelector('.portal-main-story');
-    const localItems = data.articles.filter(function (item) { return (item.local || item.remote) && item.status === 'published'; }).slice(0, 3);
+    const localItems = data.articles.filter(function (item) { return (item.local || item.remote || item.dynamic) && item.status === 'published'; }).slice(0, 3);
     localItems.reverse().forEach(function (article) {
       mainStory.insertAdjacentHTML('afterend', '<article class="portal-news"><img src="' + escapeHtml(article.image) + '" alt="' + escapeHtml(article.title) + '"><div><span>YENİ · ' + escapeHtml(categoryName(article.category).toUpperCase()) + '</span><h2><a href="' + escapeHtml(article.url) + '">' + escapeHtml(article.title) + '</a></h2><p>' + escapeHtml(article.excerpt) + '</p></div></article>');
     });
