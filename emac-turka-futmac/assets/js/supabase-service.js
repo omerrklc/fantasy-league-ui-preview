@@ -145,6 +145,11 @@
 
   async function listCategories() {
     const client = await getClient();
+    if (config.leagueManagementEnabled !== true) {
+      const fallback = await client.from('categories').select('slug,name,description,is_active').order('name');
+      if (fallback.error) throw fallback.error;
+      return fallback.data.map(function (row) { return { id:row.slug, name:row.name, description:row.description, active:row.is_active, showInMenu:false, system:true, sortOrder:0, advanced:false }; });
+    }
     const result = await client.from('categories').select('*').order('sort_order', { ascending: true }).order('name', { ascending: true });
     if (result.error) {
       if (result.error.code === '42703') {
