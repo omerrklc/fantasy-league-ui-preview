@@ -32,7 +32,7 @@
 
   document.querySelector('[data-login-form]').addEventListener('submit',async event=>{
     event.preventDefault();const loginForm=event.currentTarget,email=loginForm.elements.email.value.trim(),password=loginForm.elements.password.value,loginMessage=document.querySelector('[data-login-message]'),submit=loginForm.querySelector('[type="submit"]');
-    if(!email||password.length<8){loginMessage.textContent='Geçerli bir e-posta ve en az 8 karakter girin.';return;}
+    if(!email||password.length<6){loginMessage.textContent='Geçerli bir e-posta ve parolanızı girin.';return;}
     submit.disabled=true;loginMessage.textContent=remote?'Giriş doğrulanıyor…':'';
     try{let authState=null;if(remote)authState=await backend.signIn(email,password);else sessionStorage.setItem(SESSION,'active');loginForm.elements.password.value='';loginMessage.textContent='';showDashboard(authState);await refreshRemote();}catch(e){loginMessage.textContent=String(e&&e.message||'').includes('erişim yetkisi')?'Bu hesabın yönetim paneline erişim yetkisi yok.':'Giriş yapılamadı. E-posta ve parolanızı kontrol edin.';}finally{submit.disabled=false;}
   });
