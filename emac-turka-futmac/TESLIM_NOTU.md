@@ -49,4 +49,4 @@
 
 Auth URL Configuration bölümünde `sifre-yenile.html` adresi Redirect URLs listesinde tutulmalıdır.
 
-Yeni `supabase/migrations/003_security_hardening.sql` dosyası canlı projede bir kez çalıştırıldıktan sonra işlem geçmişi, haber sahiplik koruması, son admin hesabını silmeye karşı koruma ve Storage boyut/MIME sınırları sunucu tarafında etkinleşir. Dosya uygulanana kadar mevcut RLS ve yönetim işlevleri çalışmaya devam eder; admin paneli İşlem Geçmişi bölümünde kurulum notu gösterir.
+`supabase/migrations/003_security_hardening.sql` canlı projeye uygulandı. İşlem geçmişi tablosunun varlığı ve anonim erişime kapalı olduğu, haber sahiplik alanlarının ziyaretçilere verilmediği ve genel haber/lig okuma uçlarının çalışmaya devam ettiği REST API üzerinden doğrulandı. Son admin hesabını silmeye karşı koruma, değişiklik kaydı ve Storage boyut/MIME sınırları artık sunucu tarafında etkindir.
