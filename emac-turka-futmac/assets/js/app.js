@@ -5,19 +5,23 @@
   if (window.FUTMAC_REMOTE_READY) await window.FUTMAC_REMOTE_READY;
   const body = document.body;
   const fileName = (window.location.pathname.split('/').pop() || 'index.html').toLowerCase();
-  const section = body.dataset.section || ({
+  const requestedCategory = new URLSearchParams(window.location.search).get('kategori');
+  const section = body.dataset.section || (fileName === 'kategori.html' ? requestedCategory : ({
     'index.html': 'home', 'haber.html': 'futbol', 'futbol.html': 'futbol',
     'emac-ligi.html': 'emac', 'fantazi.html': 'fantazi', 'kurallar.html': 'fantazi',
     'transfer.html': 'transfer', 'yazarlar.html': 'yazarlar', 'arsiv.html': 'arsiv',
     'fikstur.html': 'fikstur', 'puan-durumu.html': 'puan'
-  }[fileName] || '');
+  }[fileName] || ''));
 
-  const mainLinks = [
+  const defaultMainLinks = [
     ['home', 'index.html', 'ANA SAYFA'], ['futbol', 'futbol.html', 'FUTBOL'],
     ['emac', 'emac-ligi.html', 'E-MAC LİGİ'], ['puan', 'puan-durumu.html', 'PUAN DURUMU'],
     ['fikstur', 'fikstur.html', 'FİKSTÜR'], ['fantazi', 'fantazi.html', 'FANTAZİ'],
     ['transfer', 'transfer.html', 'TRANSFER'], ['yazarlar', 'yazarlar.html', 'YAZARLAR']
   ];
+  const categoryPages = { futbol:'futbol.html', emac:'emac-ligi.html', fantazi:'fantazi.html', transfer:'transfer.html', yazarlar:'yazarlar.html', macaton:'macaton.html', haftanin11:'haftanin-11i.html', oduller:'oduller.html' };
+  const managedCategories = data ? Object.keys(data.categories).filter(function (key) { return data.categories[key].active !== false && data.categories[key].showInMenu; }).sort(function (a,b) { return (data.categories[a].sortOrder||0)-(data.categories[b].sortOrder||0); }) : [];
+  const mainLinks = managedCategories.length ? [['home','index.html','ANA SAYFA']].concat(managedCategories.map(function (key) { return [key, categoryPages[key] || 'kategori.html?kategori=' + encodeURIComponent(key), data.categories[key].title.toUpperCase()]; }), [['puan','puan-durumu.html','PUAN DURUMU'],['fikstur','fikstur.html','FİKSTÜR']]) : defaultMainLinks;
   const utilityLinks = [
     ['fikstur', 'fikstur.html', 'FİKSTÜR'], ['puan', 'puan-durumu.html', 'PUAN DURUMU'],
     ['haftanin11', 'haftanin-11i.html', 'HAFTANIN 11’İ'], ['derbi', 'haber-derbi.html', 'DERBİ'],
@@ -79,7 +83,7 @@
   }
   function categoryName(key) { return data && data.categories[key] ? data.categories[key].title : key; }
   function articleRow(article) {
-    return '<article class="news-row"><a href="' + escapeHtml(article.url) + '"><img src="' + escapeHtml(article.image) + '" alt="' + escapeHtml(article.title) + '"></a><div><div class="news-row__meta"><b>' + escapeHtml(categoryName(article.category).toUpperCase()) + '</b><time datetime="' + escapeHtml(article.date) + '">' + escapeHtml(article.displayDate) + ' · ' + escapeHtml(article.time) + '</time><span>' + escapeHtml(article.readTime) + '</span></div><h2><a href="' + escapeHtml(article.url) + '">' + escapeHtml(article.title) + '</a></h2><p>' + escapeHtml(article.excerpt) + '</p></div></article>';
+ return '<article class="news-row"><a href="' + escapeHtml(article.url) + '"><img src="' + escapeHtml(article.image) + '" alt="' + escapeHtml(article.imageAlt || article.title) + '"></a><div><div class="news-row__meta"><b>' + escapeHtml(categoryName(article.category).toUpperCase()) + '</b><time datetime="' + escapeHtml(article.date) + '">' + escapeHtml(article.displayDate) + ' · ' + escapeHtml(article.time) + '</time><span>' + escapeHtml(article.readTime) + '</span></div><h2><a href="' + escapeHtml(article.url) + '">' + escapeHtml(article.title) + '</a></h2><p>' + escapeHtml(article.excerpt) + '</p></div></article>';
   }
   function renderPagination(container, total, current, pageSize, onChange) {
     if (!container) return;
@@ -95,7 +99,7 @@
   function renderCategoryPage() {
     const results = document.querySelector('[data-category-results]');
     if (!results || !data) return;
-    const key = body.dataset.category;
+ const key = body.dataset.category || new URLSearchParams(window.location.search).get('kategori');
     const category = data.categories[key];
     const all = key === 'yazarlar' ? data.articles.filter(function (item) { return item.type === 'yazi'; }) : data.articles.filter(function (item) { return item.category === key; });
     const status = document.querySelector('[data-category-status]');
@@ -115,6 +119,7 @@
       if (title) title.textContent = category.title;
       if (kicker) kicker.textContent = category.kicker;
       if (description) description.textContent = category.description;
+      if (fileName === 'kategori.html') document.title = category.title + ' | FUTMAC';
     }
     draw();
   }
@@ -229,7 +234,7 @@
       return;
     }
     const paragraphs = String(article.content || '').split(/\n\s*\n/).filter(Boolean).map(function (paragraph, index) { return '<p' + (index === 0 ? ' class="dropcap"' : '') + '>' + escapeHtml(paragraph) + '</p>'; }).join('');
-    container.innerHTML = '<nav class="breadcrumb" aria-label="İçerik yolu"><a href="index.html">Ana Sayfa</a><span>›</span><a href="arsiv.html">Arşiv</a><span>›</span><span>İçerik</span></nav><span class="news-kicker">' + escapeHtml(categoryName(article.category).toUpperCase()) + '</span><h1>' + escapeHtml(article.title) + '</h1><p class="dek">' + escapeHtml(article.excerpt) + '</p><div class="article-meta-line"><span><strong>' + escapeHtml(article.author) + '</strong></span><time datetime="' + escapeHtml(article.date + 'T' + article.time) + '">' + escapeHtml(article.displayDate + ', ' + article.time) + '</time><span>Okuma süresi: ' + escapeHtml(article.readTime) + '</span></div><img class="article-hero" src="' + escapeHtml(article.image) + '" alt="' + escapeHtml(article.title) + '"><p class="caption">FUTMAC yönetim panelinden hazırlanan içerik.</p>' + paragraphs + '<div class="share-row"><button type="button" data-copy-link>BAĞLANTIYI KOPYALA</button><span class="copy-status" aria-live="polite"></span></div><nav class="story-navigation" aria-label="İçerik bağlantıları"><a href="admin.html"><span>‹ YÖNETİM</span>Admin paneline dön</a><a href="arsiv.html"><span>ARŞİV ›</span>Bütün içerikler</a></nav>';
+ container.innerHTML = '<nav class="breadcrumb" aria-label="İçerik yolu"><a href="index.html">Ana Sayfa</a><span>›</span><a href="arsiv.html">Arşiv</a><span>›</span><span>İçerik</span></nav><span class="news-kicker">' + escapeHtml(categoryName(article.category).toUpperCase()) + '</span><h1>' + escapeHtml(article.title) + '</h1><p class="dek">' + escapeHtml(article.excerpt) + '</p><div class="article-meta-line"><span><strong>' + escapeHtml(article.author) + '</strong></span><time datetime="' + escapeHtml(article.date + 'T' + article.time) + '">' + escapeHtml(article.displayDate + ', ' + article.time) + '</time><span>Okuma süresi: ' + escapeHtml(article.readTime) + '</span></div><img class="article-hero" src="' + escapeHtml(article.image) + '" alt="' + escapeHtml(article.imageAlt || article.title) + '"><p class="caption">FUTMAC yönetim panelinden hazırlanan içerik.</p>' + paragraphs + '<div class="share-row"><button type="button" data-copy-link>BAĞLANTIYI KOPYALA</button><span class="copy-status" aria-live="polite"></span></div><nav class="story-navigation" aria-label="İçerik bağlantıları"><a href="admin.html"><span>‹ YÖNETİM</span>Admin paneline dön</a><a href="arsiv.html"><span>ARŞİV ›</span>Bütün içerikler</a></nav>';
     document.title = article.title + ' | FUTMAC';
     const descriptionTag = document.querySelector('meta[name="description"]'); if (descriptionTag) descriptionTag.content = article.excerpt;
   }

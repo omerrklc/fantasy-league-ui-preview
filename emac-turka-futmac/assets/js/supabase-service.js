@@ -41,6 +41,7 @@
 
   function rowToArticle(row) {
     const published = row.published_at ? new Date(row.published_at) : new Date(row.updated_at || row.created_at);
+    const scheduled = row.status === 'published' && published.getTime() > Date.now();
     return {
       id: row.id,
       slug: row.slug,
@@ -55,7 +56,8 @@
       author: row.author_name || 'FUTMAC Servisi',
       authorId: row.author_slug || undefined,
       image: row.image_url || 'assets/images/futbol-manset.svg',
-      status: row.status,
+      imageAlt: row.image_alt || '',
+      status: scheduled ? 'scheduled' : row.status,
       readTime: row.read_time || '3 dk',
       url: 'haber-onizleme.html?id=' + encodeURIComponent(row.id),
       remote: true
@@ -74,10 +76,11 @@
       author_name: article.author,
       author_slug: article.authorId || null,
       image_url: article.image,
-      status: article.status,
+      status: article.status === 'scheduled' ? 'published' : article.status,
       read_time: article.readTime,
-      published_at: article.status === 'published' ? publishedAt.toISOString() : null
+      published_at: ['published', 'scheduled', 'archived'].includes(article.status) ? publishedAt.toISOString() : null
     };
+    if (config.leagueManagementEnabled === true) row.image_alt = article.imageAlt || '';
     if (article.id && !String(article.id).startsWith('local-')) row.id = article.id;
     return row;
   }
@@ -140,6 +143,20 @@
     return result.data.map(rowToArticle);
   }
 
+  async function listCategories() {
+    const client = await getClient();
+    const result = await client.from('categories').select('*').order('sort_order', { ascending: true }).order('name', { ascending: true });
+    if (result.error) {
+      if (result.error.code === '42703') {
+        const fallback = await client.from('categories').select('slug,name,description,is_active').order('name');
+        if (fallback.error) throw fallback.error;
+        return fallback.data.map(function (row) { return { id:row.slug, name:row.name, description:row.description, active:row.is_active, showInMenu:false, system:true, sortOrder:0, advanced:false }; });
+      }
+      throw result.error;
+    }
+    return result.data.map(function (row) { return { id:row.slug, name:row.name, description:row.description, active:row.is_active, showInMenu:row.show_in_menu, system:row.is_system, sortOrder:row.sort_order, advanced:true }; });
+  }
+
   function optionalRows(result) {
     if (!result.error) return result.data;
     const message = String(result.error.message || '');
@@ -161,7 +178,7 @@
     const client = await getClient();
     const rows = optionalRows(await client.from('league_teams').select('*').order('sort_order').order('name'));
     if (rows === null) return null;
-    return rows.map(function (row) { return { id: row.id, name: row.name, manager: row.manager, shortName: row.short_name || '', active: row.is_active, sortOrder: row.sort_order }; });
+    return rows.map(function (row) { return { id: row.id, name: row.name, manager: row.manager, shortName: row.short_name || '', logo: row.logo_url || 'assets/images/logo/emac-turka-transparent.png', active: row.is_active, sortOrder: row.sort_order }; });
   }
 
   async function listStandings() {
@@ -210,6 +227,50 @@
     const result = await client.from('authors').upsert(row, { onConflict:'slug' }).select().single(); if (result.error) throw result.error; return result.data;
   }
 
+  async function saveTeam(team) {
+    const client = await getClient();
+    const row = { name:team.name, manager:team.manager, short_name:team.shortName || null, logo_url:team.logo, is_active:team.active, sort_order:team.sortOrder };
+    if (team.id) row.id = team.id;
+    const result = row.id ? await client.from('league_teams').update(row).eq('id', row.id).select().single() : await client.from('league_teams').insert(row).select().single();
+    if (result.error) throw result.error;
+    return result.data;
+  }
+
+  async function deleteTeam(id) {
+    const client = await getClient();
+    const result = await client.from('league_teams').delete().eq('id', id);
+    if (result.error) throw result.error;
+  }
+
+  async function saveCategory(category) {
+    const client = await getClient();
+    const row = { slug:category.id, name:category.name, description:category.description, is_active:category.active, show_in_menu:category.showInMenu, sort_order:category.sortOrder };
+    if (category.system !== undefined) row.is_system = category.system;
+    const result = await client.from('categories').upsert(row, { onConflict:'slug' }).select().single();
+    if (result.error) throw result.error;
+    return result.data;
+  }
+
+  async function deleteCategory(id) {
+    const client = await getClient();
+    const result = await client.from('categories').delete().eq('slug', id);
+    if (result.error) throw result.error;
+  }
+
+  async function listProfiles() {
+    const client = await getClient();
+    const result = await client.from('profiles').select('id,display_name,role,updated_at').order('display_name');
+    if (result.error) throw result.error;
+    return result.data.map(function (row) { return { id:row.id, name:row.display_name, role:row.role, updatedAt:row.updated_at }; });
+  }
+
+  async function saveProfile(profile) {
+    const client = await getClient();
+    const result = await client.from('profiles').update({ display_name:profile.name, role:profile.role }).eq('id', profile.id).select('id,display_name,role,updated_at').single();
+    if (result.error) throw result.error;
+    return result.data;
+  }
+
   async function saveArticle(article) {
     const client = await getClient();
     const row = articleToRow(article);
@@ -234,7 +295,7 @@
     const userResult = await client.auth.getUser();
     if (userResult.error || !userResult.data.user) throw new Error('Görsel yüklemek için yeniden giriş yapın.');
     const extension = file.type === 'image/png' ? 'png' : file.type === 'image/webp' ? 'webp' : 'jpg';
-    const safeFolder = folder === 'authors' ? 'authors' : 'articles';
+    const safeFolder = folder === 'authors' ? 'authors' : folder === 'teams' ? 'teams' : 'articles';
     const path = safeFolder + '/' + userResult.data.user.id + '/' + crypto.randomUUID() + '.' + extension;
     const upload = await client.storage.from(config.mediaBucket || 'futmac-media').upload(path, file, { cacheControl: '3600', upsert: false, contentType: file.type });
     if (upload.error) throw upload.error;
@@ -246,9 +307,11 @@
     enabled: enabled(), leagueManagementEnabled: config.leagueManagementEnabled === true,
     getClient: getClient, getSession: getSession, signIn: signIn,
     signOut: signOut, requestPasswordReset: requestPasswordReset, updatePassword: updatePassword,
-    listArticles: listArticles, saveArticle: saveArticle, deleteArticle: deleteArticle,
+    listArticles: listArticles, saveArticle: saveArticle, deleteArticle: deleteArticle, listCategories: listCategories,
     listAuthors: listAuthors, listTeams: listTeams, listStandings: listStandings, listFixtures: listFixtures,
     saveFixture: saveFixture, deleteFixture: deleteFixture, saveStanding: saveStanding, saveAuthor: saveAuthor,
+    saveTeam: saveTeam, deleteTeam: deleteTeam, saveCategory: saveCategory, deleteCategory: deleteCategory,
+    listProfiles: listProfiles, saveProfile: saveProfile,
     uploadImage: uploadImage
   });
 }());

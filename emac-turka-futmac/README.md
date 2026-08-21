@@ -14,6 +14,7 @@ Site `file://` ile de açılabilir. Veri katmanı JSON isteği yerine `assets/js
 
 - `index.html`: Ana haber portalı
 - `futbol.html`, `emac-ligi.html`, `fantazi.html`, `transfer.html`: Haber kategorileri
+- `kategori.html`: Sonradan eklenen kategoriler için ortak liste şablonu
 - `macaton.html`, `haftanin-11i.html`, `oduller.html`: Özel içerik kategorileri
 - `fikstur.html`: Hafta seçicili maç merkezi
 - `puan-durumu.html`: E-Mac örnek takım/yönetici puan tablosu
@@ -32,7 +33,7 @@ Site `file://` ile de açılabilir. Veri katmanı JSON isteği yerine `assets/js
 
 ## Admin paneli
 
-`admin.html` ekranında haber/köşe yazısı ekleme, düzenleme, silme, arama ve filtreleme, taslak/yayın durumu, kart önizlemesi, parola sıfırlama ve yedekleme araçları bulunur. İkinci veritabanı güncellemesi etkinleştirildiğinde aynı panelden fikstür, puan durumu ve yazarlar da yönetilir. Panel iki çalışma biçimini destekler:
+`admin.html` ekranında haber/köşe yazısı ekleme, düzenleme, silme, arama ve filtreleme, taslak/yayın/zamanlama/yayından kaldırma, kart önizlemesi, parola sıfırlama ve yedekleme araçları bulunur. İkinci veritabanı güncellemesi etkinleştirildiğinde aynı panelden fikstür, puan durumu, yazarlar, takımlar, kategoriler ve kullanıcı rolleri de yönetilir. Panel iki çalışma biçimini destekler:
 
 - Varsayılan yerel demo: kurulum gerektirmez; içerikleri yalnızca aynı tarayıcıda saklar.
 - Supabase modu: gerçek kullanıcı girişi, ortak haber/taslak veritabanı ve kapak görseli yükleme sağlar.
@@ -53,4 +54,4 @@ Mevzuat sayfası hızlı başvuru özetidir. Kaynak belgenin giriş paragrafınd
 
 ## Test
 
-Teslim sürümünde 31 HTML sayfası 320, 390, 768 ve 1440 piksel genişliklerde kontrol edilir. Kırık yerel bağlantı, kırık görsel, yatay taşma, başlık yapısı, mobil menü, arşiv filtreleri, fikstür durumları, puan tablosu, parola yenileme ve admin giriş-yayın akışı test kapsamındadır.
+Teslim sürümünde 32 HTML sayfası 320, 375, 390, 768, 1024 ve 1440 piksel genişliklerde kontrol edilir. Kırık yerel bağlantı, kırık görsel, yatay taşma, başlık yapısı, mobil menü, arşiv filtreleri, fikstür durumları, puan tablosu, parola yenileme, rol görünürlüğü ve admin giriş-yayın akışı test kapsamındadır.

@@ -67,21 +67,26 @@
     const backend = window.FUTMAC_SUPABASE;
     function optionalLoad(label, loader) {
       return loader().catch(function (error) {
-        console.warn('FUTMAC ' + label + ' verileri yüklenemedi; sabit veriler kullanılıyor.', error);
+        console.warn('FUTMAC ' + label + ' verileri yüklenemedi; sabit veriler kullanılıyor.');
         return null;
       });
     }
     window.FUTMAC_REMOTE_READY = Promise.all([
       optionalLoad('haber', function () { return backend.listArticles({ publishedOnly: true }); }),
+      optionalLoad('kategori', function () { return backend.listCategories(); }),
       backend.leagueManagementEnabled ? optionalLoad('yazar', function () { return backend.listAuthors(); }) : Promise.resolve(null),
       backend.leagueManagementEnabled ? optionalLoad('puan durumu', function () { return backend.listStandings(); }) : Promise.resolve(null),
       backend.leagueManagementEnabled ? optionalLoad('fikstür', function () { return backend.listFixtures(); }) : Promise.resolve(null)
     ]).then(function (results) {
-      const remoteArticles = results[0], remoteAuthors = results[1], remoteStandings = results[2], remoteFixtures = results[3];
+      const remoteArticles = results[0], remoteCategories = results[1], remoteAuthors = results[2], remoteStandings = results[3], remoteFixtures = results[4];
       if (remoteArticles) {
         const remoteSlugs = new Set(remoteArticles.map(function (article) { return article.slug; }));
         window.FUTMAC_DATA.articles = remoteArticles.concat(window.FUTMAC_DATA.articles.filter(function (article) { return !remoteSlugs.has(article.slug); }));
       }
+      if (remoteCategories && remoteCategories.length) remoteCategories.forEach(function (category) {
+        const current = window.FUTMAC_DATA.categories[category.id] || {};
+        window.FUTMAC_DATA.categories[category.id] = Object.assign({}, current, { title:category.name, kicker:current.kicker || category.name.toUpperCase(), description:category.description || current.description || '', active:category.active, showInMenu:category.showInMenu, sortOrder:category.sortOrder || 0 });
+      });
       if (remoteAuthors && remoteAuthors.length) window.FUTMAC_DATA.authors = remoteAuthors;
       if (remoteStandings && remoteStandings.length) {
         window.FUTMAC_DATA.standings = remoteStandings;
@@ -96,7 +101,8 @@
     const localArticles = JSON.parse(localStorage.getItem('futmac_admin_articles_v1') || '[]');
     if (Array.isArray(localArticles)) {
       const published = localArticles.filter(function (article) {
-        return article && article.status === 'published' && typeof article.title === 'string' && /^assets\/images\/[A-Za-z0-9_./-]+$/.test(article.image || '');
+        const due = article && article.status === 'scheduled' && new Date(article.date + 'T' + article.time + ':00').getTime() <= Date.now();
+        return article && (article.status === 'published' || due) && typeof article.title === 'string' && /^assets\/images\/[A-Za-z0-9_./-]+$/.test(article.image || '');
       });
       window.FUTMAC_DATA.articles = published.concat(window.FUTMAC_DATA.articles);
     }
