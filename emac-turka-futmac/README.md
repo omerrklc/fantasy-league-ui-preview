@@ -22,7 +22,8 @@ Site `file://` ile de açılabilir. Veri katmanı JSON isteği yerine `assets/js
 - `arsiv.html`: Arama, kategori, yazar ve tarih filtreli arşiv
 - `kurallar.html`: 7 kısım ve 19 maddelik mevzuat özeti ve resmî PDF bağlantısı
 - `404.html`: Sayfa bulunamadı görünümü
-- `admin.html`: Yerel demo yönetici girişi ve haber yönetim paneli
+- `admin.html`: Haber, fikstür, puan durumu ve yazar yönetim paneli
+- `sifre-yenile.html`: Güvenli parola yenileme ekranı
 - `haber-onizleme.html`: Admin panelinde hazırlanan yerel içeriğin detay görünümü
 
 ## İçerik güncelleme
@@ -31,12 +32,12 @@ Site `file://` ile de açılabilir. Veri katmanı JSON isteği yerine `assets/js
 
 ## Admin paneli
 
-`admin.html` ekranında haber/köşe yazısı ekleme, düzenleme, silme, taslak/yayın durumu, kart önizlemesi ve JSON dışa aktarma bulunur. Panel iki çalışma biçimini destekler:
+`admin.html` ekranında haber/köşe yazısı ekleme, düzenleme, silme, arama ve filtreleme, taslak/yayın durumu, kart önizlemesi, parola sıfırlama ve yedekleme araçları bulunur. İkinci veritabanı güncellemesi etkinleştirildiğinde aynı panelden fikstür, puan durumu ve yazarlar da yönetilir. Panel iki çalışma biçimini destekler:
 
 - Varsayılan yerel demo: kurulum gerektirmez; içerikleri yalnızca aynı tarayıcıda saklar.
 - Supabase modu: gerçek kullanıcı girişi, ortak haber/taslak veritabanı ve kapak görseli yükleme sağlar.
 
-Supabase kurulumu için `SUPABASE_KURULUM.md` dosyasını izleyin. Başlangıç şeması ve Row Level Security kuralları `supabase/migrations/001_initial.sql` içindedir. Tarayıcı bağlantısı `assets/js/supabase-config.js` dosyasından açılır. `service_role` anahtarı frontend dosyalarına kesinlikle eklenmemelidir.
+Supabase kurulumu için `SUPABASE_KURULUM.md` dosyasını izleyin. Başlangıç şeması ve Row Level Security kuralları `supabase/migrations/001_initial.sql`; fikstür, puan durumu ve yazar yönetimi şeması `supabase/migrations/002_league_management.sql` içindedir. İkinci migrasyon uygulanana kadar bu üç bölüm sabit örnek verilerle çalışmaya devam eder. Tarayıcı bağlantısı `assets/js/supabase-config.js` dosyasından açılır. `service_role` anahtarı frontend dosyalarına kesinlikle eklenmemelidir.
 
 Yazar fotoğrafları `assets/images/yazarlar/` klasöründedir:
 
@@ -52,4 +53,4 @@ Mevzuat sayfası hızlı başvuru özetidir. Kaynak belgenin giriş paragrafınd
 
 ## Test
 
-Teslim sürümünde 30 HTML sayfası 320, 390, 768 ve 1440 piksel genişliklerde kontrol edilir. Kırık yerel bağlantı, kırık görsel, yatay taşma, başlık yapısı, mobil menü, arşiv filtreleri, fikstür durumları, puan tablosu ve admin giriş-yayın akışı test kapsamındadır.
+Teslim sürümünde 31 HTML sayfası 320, 390, 768 ve 1440 piksel genişliklerde kontrol edilir. Kırık yerel bağlantı, kırık görsel, yatay taşma, başlık yapısı, mobil menü, arşiv filtreleri, fikstür durumları, puan tablosu, parola yenileme ve admin giriş-yayın akışı test kapsamındadır.

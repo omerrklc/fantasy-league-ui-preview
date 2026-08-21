@@ -2,6 +2,7 @@
 
 1. Supabase üzerinde yeni bir proje oluşturun.
 2. SQL Editor bölümünde `supabase/migrations/001_initial.sql` dosyasının tamamını çalıştırın.
+   Ardından fikstür, puan durumu ve yazar yönetimi için `supabase/migrations/002_league_management.sql` dosyasının tamamını çalıştırın. İşlem başarılı olduktan sonra `assets/js/supabase-config.js` içindeki `leagueManagementEnabled` değerini `true` yapın. İki SQL dosyası da tekrar çalıştırmaya karşı güvenli hazırlanmıştır.
 3. Authentication > Users bölümünden yönetici kullanıcısını oluşturun.
 4. SQL Editor içinde aşağıdaki komutu, kullanıcının e-posta adresini değiştirerek çalıştırın:
 
@@ -15,6 +16,7 @@ where id = (select id from auth.users where email = 'yonetici@example.com');
 6. Project Settings > API bölümünden proje URL’sini ve **publishable key** (eski projelerde `anon` key) değerini alın.
 7. `assets/js/supabase-config.js` dosyasında `enabled` değerini `true` yapın; URL ve public anahtarı ilgili alanlara girin.
 8. Siteyi VS Code Live Server ile açın ve `admin.html` üzerinden gerçek kullanıcıyla giriş yapın.
+9. Authentication > URL Configuration bölümünde canlı site adresini Site URL olarak ekleyin. Redirect URLs listesine `https://omerrklc.github.io/fantasy-league-ui-preview/emac-turka-futmac/sifre-yenile.html` adresini ekleyin. Bu ayar “Şifremi unuttum” bağlantısının doğru sayfaya dönmesi için gereklidir.
 
 ## Güvenlik notları
 

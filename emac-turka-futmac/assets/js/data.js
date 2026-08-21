@@ -64,12 +64,31 @@
   // Bağlı değilse admin panelindeki yerel demo içerikleri aynı tarayıcıda gösterilir.
   window.FUTMAC_REMOTE_READY = Promise.resolve();
   if (window.FUTMAC_SUPABASE && window.FUTMAC_SUPABASE.enabled) {
-    window.FUTMAC_REMOTE_READY = window.FUTMAC_SUPABASE.listArticles({ publishedOnly: true }).then(function (remoteArticles) {
-      const remoteSlugs = new Set(remoteArticles.map(function (article) { return article.slug; }));
-      window.FUTMAC_DATA.articles = remoteArticles.concat(window.FUTMAC_DATA.articles.filter(function (article) { return !remoteSlugs.has(article.slug); }));
-    }).catch(function (error) {
-      console.error('FUTMAC içerikleri Supabase üzerinden yüklenemedi:', error);
-      window.dispatchEvent(new CustomEvent('futmac:data-error', { detail: 'Güncel içerikler yüklenemedi; sabit haberler gösteriliyor.' }));
+    const backend = window.FUTMAC_SUPABASE;
+    function optionalLoad(label, loader) {
+      return loader().catch(function (error) {
+        console.warn('FUTMAC ' + label + ' verileri yüklenemedi; sabit veriler kullanılıyor.', error);
+        return null;
+      });
+    }
+    window.FUTMAC_REMOTE_READY = Promise.all([
+      optionalLoad('haber', function () { return backend.listArticles({ publishedOnly: true }); }),
+      backend.leagueManagementEnabled ? optionalLoad('yazar', function () { return backend.listAuthors(); }) : Promise.resolve(null),
+      backend.leagueManagementEnabled ? optionalLoad('puan durumu', function () { return backend.listStandings(); }) : Promise.resolve(null),
+      backend.leagueManagementEnabled ? optionalLoad('fikstür', function () { return backend.listFixtures(); }) : Promise.resolve(null)
+    ]).then(function (results) {
+      const remoteArticles = results[0], remoteAuthors = results[1], remoteStandings = results[2], remoteFixtures = results[3];
+      if (remoteArticles) {
+        const remoteSlugs = new Set(remoteArticles.map(function (article) { return article.slug; }));
+        window.FUTMAC_DATA.articles = remoteArticles.concat(window.FUTMAC_DATA.articles.filter(function (article) { return !remoteSlugs.has(article.slug); }));
+      }
+      if (remoteAuthors && remoteAuthors.length) window.FUTMAC_DATA.authors = remoteAuthors;
+      if (remoteStandings && remoteStandings.length) {
+        window.FUTMAC_DATA.standings = remoteStandings;
+        const latest = remoteStandings.map(function (row) { return row.updatedAt; }).filter(Boolean).sort().pop();
+        if (latest) window.FUTMAC_DATA.updatedAt = new Intl.DateTimeFormat('tr-TR', { day:'numeric', month:'long', year:'numeric', hour:'2-digit', minute:'2-digit' }).format(new Date(latest));
+      }
+      if (remoteFixtures && Object.keys(remoteFixtures).length) window.FUTMAC_DATA.fixtures = remoteFixtures;
     });
     return;
   }
