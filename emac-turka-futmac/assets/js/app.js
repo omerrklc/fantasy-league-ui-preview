@@ -221,20 +221,23 @@
     const container = document.querySelector('[data-local-article]');
     if (!container || !data) return;
     const params = new URLSearchParams(window.location.search);
+    const previewMode = params.get('preview') === '1';
+    const aside = document.querySelector('[data-dynamic-aside]');
     let article = null;
-    if (params.get('preview') === '1') {
+    if (previewMode) {
       try { article = JSON.parse(sessionStorage.getItem('futmac_admin_preview_v1') || 'null'); } catch (error) { article = null; }
+      if (aside) aside.innerHTML = '<section class="side-module"><h2>ÖNİZLEME</h2><p style="padding:8px">Bu görünüm yalnızca hazırladığınız içeriği kontrol etmek içindir.</p><a href="admin.html">Yönetim paneline dön »</a></section>';
     } else {
       const id = params.get('id');
       article = data.articles.find(function (item) { return (item.local || item.remote || item.dynamic) && item.id === id; }) || null;
     }
     if (!article) {
-      container.innerHTML = '<nav class="breadcrumb" aria-label="İçerik yolu"><a href="index.html">Ana Sayfa</a><span>›</span><span>İçerik</span></nav><span class="news-kicker">BULUNAMADI</span><h1>İçerik bulunamadı</h1><p class="dek">Bu içerik silinmiş, taslak durumda veya henüz yayımlanmamış olabilir.</p><p><a class="pdf-button" href="admin.html">YÖNETİM PANELİNE DÖN</a></p>';
+      container.innerHTML = '<nav class="breadcrumb" aria-label="İçerik yolu"><a href="index.html">Ana Sayfa</a><span>›</span><span>İçerik</span></nav><span class="news-kicker">BULUNAMADI</span><h1>İçerik bulunamadı</h1><p class="dek">Bu içerik silinmiş, taslak durumda veya henüz yayımlanmamış olabilir.</p><p><a class="pdf-button" href="index.html">ANA SAYFAYA DÖN</a></p>';
       document.title = 'İçerik Bulunamadı | FUTMAC';
       return;
     }
     const paragraphs = String(article.content || '').split(/\n\s*\n/).filter(Boolean).map(function (paragraph, index) { return '<p' + (index === 0 ? ' class="dropcap"' : '') + '>' + escapeHtml(paragraph) + '</p>'; }).join('');
- container.innerHTML = '<nav class="breadcrumb" aria-label="İçerik yolu"><a href="index.html">Ana Sayfa</a><span>›</span><a href="arsiv.html">Arşiv</a><span>›</span><span>İçerik</span></nav><span class="news-kicker">' + escapeHtml(categoryName(article.category).toUpperCase()) + '</span><h1>' + escapeHtml(article.title) + '</h1><p class="dek">' + escapeHtml(article.excerpt) + '</p><div class="article-meta-line"><span><strong>' + escapeHtml(article.author) + '</strong></span><time datetime="' + escapeHtml(article.date + 'T' + article.time) + '">' + escapeHtml(article.displayDate + ', ' + article.time) + '</time><span>Okuma süresi: ' + escapeHtml(article.readTime) + '</span></div><img class="article-hero" src="' + escapeHtml(article.image) + '" alt="' + escapeHtml(article.imageAlt || article.title) + '"><p class="caption">FUTMAC yönetim panelinden hazırlanan içerik.</p>' + paragraphs + '<div class="share-row"><button type="button" data-copy-link>BAĞLANTIYI KOPYALA</button><span class="copy-status" aria-live="polite"></span></div><nav class="story-navigation" aria-label="İçerik bağlantıları"><a href="admin.html"><span>‹ YÖNETİM</span>Admin paneline dön</a><a href="arsiv.html"><span>ARŞİV ›</span>Bütün içerikler</a></nav>';
+ container.innerHTML = '<nav class="breadcrumb" aria-label="İçerik yolu"><a href="index.html">Ana Sayfa</a><span>›</span><a href="arsiv.html">Arşiv</a><span>›</span><span>İçerik</span></nav><span class="news-kicker">' + escapeHtml(categoryName(article.category).toUpperCase()) + '</span><h1>' + escapeHtml(article.title) + '</h1><p class="dek">' + escapeHtml(article.excerpt) + '</p><div class="article-meta-line"><span><strong>' + escapeHtml(article.author) + '</strong></span><time datetime="' + escapeHtml(article.date + 'T' + article.time) + '">' + escapeHtml(article.displayDate + ', ' + article.time) + '</time><span>Okuma süresi: ' + escapeHtml(article.readTime) + '</span></div><img class="article-hero" src="' + escapeHtml(article.image) + '" alt="' + escapeHtml(article.imageAlt || article.title) + '"><p class="caption">FUTMAC Haber Merkezi</p>' + paragraphs + '<div class="share-row"><button type="button" data-copy-link>BAĞLANTIYI KOPYALA</button><span class="copy-status" aria-live="polite"></span></div><nav class="story-navigation" aria-label="İçerik bağlantıları"><a href="index.html"><span>‹ ANA SAYFA</span>FUTMAC gündemine dön</a><a href="arsiv.html"><span>ARŞİV ›</span>Bütün içerikler</a></nav>';
     document.title = article.title + ' | FUTMAC';
     const descriptionTag = document.querySelector('meta[name="description"]'); if (descriptionTag) descriptionTag.content = article.excerpt;
   }
@@ -267,9 +270,11 @@
     if (!tag) { tag = document.createElement('meta'); tag.setAttribute(isName ? 'name' : 'property', property); document.head.appendChild(tag); } tag.setAttribute('content', content);
   }
   const canonicalBase = 'https://omerrklc.github.io/fantasy-league-ui-preview/emac-turka-futmac/'; let canonical = document.head.querySelector('link[rel="canonical"]');
-  if (!canonical) { canonical = document.createElement('link'); canonical.rel = 'canonical'; document.head.appendChild(canonical); } canonical.href = canonicalBase + fileName;
+  const dynamicId = fileName === 'haber-onizleme.html' ? new URLSearchParams(window.location.search).get('id') : null;
+  if (!canonical) { canonical = document.createElement('link'); canonical.rel = 'canonical'; document.head.appendChild(canonical); } canonical.href = canonicalBase + fileName + (dynamicId ? '?id=' + encodeURIComponent(dynamicId) : '');
   const description = (document.head.querySelector('meta[name="description"]') || {}).content || 'E-Mac Turka Fantazi Ligi haberleri ve lig merkezi.';
-  ensureMeta('og:title', document.title, false); ensureMeta('og:description', description, false); ensureMeta('og:type', body.dataset.schema === 'article' ? 'article' : 'website', false); ensureMeta('og:url', canonical.href, false); ensureMeta('og:image', canonicalBase + 'assets/images/logo/emac-turka.png', false); ensureMeta('twitter:card', 'summary_large_image', true); ensureMeta('twitter:title', document.title, true); ensureMeta('twitter:description', description, true);
+  const renderedHero = document.querySelector('.article-hero'); const socialImage = renderedHero ? new URL(renderedHero.getAttribute('src'), document.baseURI).href : canonicalBase + 'assets/images/logo/emac-turka.png';
+  ensureMeta('og:title', document.title, false); ensureMeta('og:description', description, false); ensureMeta('og:type', body.dataset.schema === 'article' ? 'article' : 'website', false); ensureMeta('og:url', canonical.href, false); ensureMeta('og:image', socialImage, false); ensureMeta('twitter:card', 'summary_large_image', true); ensureMeta('twitter:title', document.title, true); ensureMeta('twitter:description', description, true); ensureMeta('twitter:image', socialImage, true);
   if (!document.head.querySelector('link[rel="icon"]')) { const icon = document.createElement('link'); icon.rel = 'icon'; icon.href = 'assets/images/logo/emac-turka-transparent.png'; document.head.appendChild(icon); }
   if (body.dataset.schema === 'article' && !document.querySelector('script[data-structured]')) {
     const articleTitle = document.querySelector('h1'); const published = document.querySelector('time[datetime]'); const json = document.createElement('script'); json.type = 'application/ld+json'; json.dataset.structured = 'true';
