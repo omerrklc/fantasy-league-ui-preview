@@ -2,7 +2,7 @@
 
 1. Supabase üzerinde yeni bir proje oluşturun.
 2. SQL Editor bölümünde `supabase/migrations/001_initial.sql` dosyasının tamamını çalıştırın.
-   Ardından fikstür, puan durumu ve yazar yönetimi için `supabase/migrations/002_league_management.sql` dosyasının tamamını çalıştırın. İşlem başarılı olduktan sonra `assets/js/supabase-config.js` içindeki `leagueManagementEnabled` değerini `true` yapın. İki SQL dosyası da tekrar çalıştırmaya karşı güvenli hazırlanmıştır.
+   Ardından fikstür, puan durumu, yazar, takım, kategori, gelişmiş yayın durumu ve rol koruması için `supabase/migrations/002_league_management.sql` dosyasının tamamını çalıştırın. İşlem başarılı olduktan ve `authors`, `league_teams`, `standings`, `fixtures` tabloları göründükten sonra `assets/js/supabase-config.js` içindeki `leagueManagementEnabled` değerini `true` yapın. İki SQL dosyası da tekrar çalıştırmaya karşı güvenli hazırlanmıştır.
 3. Authentication > Users bölümünden yönetici kullanıcısını oluşturun.
 4. SQL Editor içinde aşağıdaki komutu, kullanıcının e-posta adresini değiştirerek çalıştırın:
 
@@ -24,5 +24,13 @@ where id = (select id from auth.users where email = 'yonetici@example.com');
 - Tarayıcıdaki public anahtar tek başına yazma yetkisi vermez. Yetki SQL dosyasındaki Row Level Security kurallarıyla kontrol edilir.
 - Yeni kullanıcılar otomatik olarak `viewer` olur. Editör veya admin rolü ayrıca veritabanından verilmelidir.
 - Canlıya geçmeden önce Auth ayarlarından e-posta doğrulama ve parola politikasını kontrol edin.
+- `leagueManagementEnabled` yalnızca ikinci SQL dosyası hatasız tamamlandıktan sonra açılmalıdır. Aksi halde canlı site sabit lig verilerini kullanmaya devam etmelidir.
+
+## Yedekleme
+
+- Admin panelindeki **İçerik Yedeğini İndir** düğmesi haberlerle birlikte kategori, yazar, takım, fikstür ve puan durumu verilerini JSON olarak indirir; kullanıcı profilleri güvenlik nedeniyle bu dosyaya eklenmez.
+- Canlı Supabase verilerine tarayıcıdan toplu JSON içe aktarma kapalıdır. Bu, hatalı bir dosyanın mevcut içerikleri topluca değiştirmesini önler.
+- Düzenli tam veritabanı yedekleri Supabase Dashboard içindeki Database / Backups bölümünden yönetilmelidir. Planın yedekleme özelliği sunmadığı durumlarda SQL dışa aktarma işlemi yalnızca güvenilir bir yönetici bilgisayarından yapılmalıdır.
+- Veritabanı yedeği Storage içindeki gerçek görsel dosyalarını içermez; yalnızca dosya kayıtlarını içerir. Önemli medya dosyaları ayrıca güvenli bir konuma düzenli olarak kopyalanmalıdır.
 
 Supabase yapılandırılmadığında site ve admin paneli yerel demo modunda çalışmaya devam eder.

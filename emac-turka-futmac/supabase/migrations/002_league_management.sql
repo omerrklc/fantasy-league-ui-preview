@@ -1,6 +1,24 @@
 -- FUTMAC lig yönetimi modülleri
 -- 001_initial.sql sonrasında Supabase SQL Editor içinde bir kez çalıştırın.
 
+-- Mevcut içerik tablolarını gelişmiş yönetim ekranlarına hazırlar.
+alter table public.categories add column if not exists show_in_menu boolean not null default false;
+alter table public.categories add column if not exists is_system boolean not null default false;
+alter table public.categories add column if not exists sort_order smallint not null default 0 check (sort_order between 0 and 999);
+
+update public.categories
+set is_system = true,
+    show_in_menu = slug in ('futbol', 'emac', 'fantazi', 'transfer', 'yazarlar'),
+    sort_order = case slug
+      when 'futbol' then 10 when 'emac' then 20 when 'fantazi' then 30
+      when 'transfer' then 40 when 'yazarlar' then 50 when 'macaton' then 60
+      when 'haftanin11' then 70 when 'oduller' then 80 else sort_order end
+where slug in ('futbol', 'emac', 'fantazi', 'transfer', 'yazarlar', 'macaton', 'haftanin11', 'oduller');
+
+alter table public.articles add column if not exists image_alt text not null default '' check (char_length(image_alt) <= 180);
+alter table public.articles drop constraint if exists articles_status_check;
+alter table public.articles add constraint articles_status_check check (status in ('draft', 'published', 'archived'));
+
 create table if not exists public.authors (
   slug text primary key check (slug ~ '^[a-z0-9-]+$'),
   name text not null unique check (char_length(name) between 2 and 80),
@@ -18,6 +36,7 @@ create table if not exists public.league_teams (
   name text not null unique check (char_length(name) between 2 and 80),
   manager text not null check (char_length(manager) between 2 and 80),
   short_name text check (short_name is null or char_length(short_name) between 2 and 12),
+  logo_url text not null default 'assets/images/logo/emac-turka-transparent.png' check (char_length(logo_url) <= 1000 and logo_url ~ '^(assets/images/[A-Za-z0-9_./-]+|https://[^[:space:]]+)$'),
   is_active boolean not null default true,
   sort_order smallint not null default 0 check (sort_order between 0 and 999),
   created_at timestamptz not null default now(),
@@ -25,7 +44,7 @@ create table if not exists public.league_teams (
 );
 
 create table if not exists public.standings (
-  team_id uuid primary key references public.league_teams(id) on delete cascade,
+  team_id uuid primary key references public.league_teams(id) on delete restrict,
   played smallint not null default 0 check (played between 0 and 60),
   won smallint not null default 0 check (won between 0 and 60),
   drawn smallint not null default 0 check (drawn between 0 and 60),
@@ -37,6 +56,13 @@ create table if not exists public.standings (
   updated_at timestamptz not null default now(),
   constraint standings_match_total check (won + drawn + lost <= played)
 );
+
+alter table public.league_teams add column if not exists logo_url text not null default 'assets/images/logo/emac-turka-transparent.png';
+alter table public.league_teams drop constraint if exists league_teams_logo_url_check;
+alter table public.league_teams add constraint league_teams_logo_url_check check (char_length(logo_url) <= 1000 and logo_url ~ '^(assets/images/[A-Za-z0-9_./-]+|https://[^[:space:]]+)$');
+
+alter table public.standings drop constraint if exists standings_team_id_fkey;
+alter table public.standings add constraint standings_team_id_fkey foreign key (team_id) references public.league_teams(id) on delete restrict;
 
 create table if not exists public.fixtures (
   id uuid primary key default gen_random_uuid(),
@@ -77,22 +103,76 @@ alter table public.fixtures enable row level security;
 drop policy if exists authors_public_read on public.authors;
 create policy authors_public_read on public.authors for select to anon, authenticated using (is_active or public.is_editor());
 drop policy if exists authors_editor_write on public.authors;
-create policy authors_editor_write on public.authors for all to authenticated using (public.is_editor()) with check (public.is_editor());
+create policy authors_editor_write on public.authors for all to authenticated using (public.is_admin()) with check (public.is_admin());
 
 drop policy if exists league_teams_public_read on public.league_teams;
 create policy league_teams_public_read on public.league_teams for select to anon, authenticated using (is_active or public.is_editor());
 drop policy if exists league_teams_editor_write on public.league_teams;
-create policy league_teams_editor_write on public.league_teams for all to authenticated using (public.is_editor()) with check (public.is_editor());
+create policy league_teams_editor_write on public.league_teams for all to authenticated using (public.is_admin()) with check (public.is_admin());
 
 drop policy if exists standings_public_read on public.standings;
-create policy standings_public_read on public.standings for select to anon, authenticated using (true);
+create policy standings_public_read on public.standings for select to anon, authenticated using (
+  public.is_editor() or exists (select 1 from public.league_teams team where team.id = team_id and team.is_active)
+);
 drop policy if exists standings_editor_write on public.standings;
-create policy standings_editor_write on public.standings for all to authenticated using (public.is_editor()) with check (public.is_editor());
+create policy standings_editor_write on public.standings for all to authenticated using (public.is_admin()) with check (public.is_admin());
 
 drop policy if exists fixtures_public_read on public.fixtures;
-create policy fixtures_public_read on public.fixtures for select to anon, authenticated using (true);
+create policy fixtures_public_read on public.fixtures for select to anon, authenticated using (
+  public.is_editor() or (
+    exists (select 1 from public.league_teams home where home.id = home_team_id and home.is_active)
+    and exists (select 1 from public.league_teams away where away.id = away_team_id and away.is_active)
+  )
+);
 drop policy if exists fixtures_editor_write on public.fixtures;
-create policy fixtures_editor_write on public.fixtures for all to authenticated using (public.is_editor()) with check (public.is_editor());
+create policy fixtures_editor_write on public.fixtures for all to authenticated using (public.is_admin()) with check (public.is_admin());
+
+-- Kategori yapısını yalnızca admin yönetir. Sistem kategorileri silinemez veya sistem niteliğini kaybedemez.
+drop policy if exists categories_editor_write on public.categories;
+drop policy if exists categories_admin_write on public.categories;
+create policy categories_admin_write on public.categories for all to authenticated using (public.is_admin()) with check (public.is_admin());
+
+create or replace function public.protect_system_category()
+returns trigger language plpgsql set search_path = public as $$
+begin
+  if old.is_system and tg_op = 'DELETE' then
+    raise exception 'system_category_delete';
+  end if;
+  if old.is_system and (new.slug <> old.slug or not new.is_system) then
+    raise exception 'system_category_identity';
+  end if;
+  if tg_op = 'DELETE' then return old; end if;
+  return new;
+end;
+$$;
+drop trigger if exists categories_protect_system on public.categories;
+create trigger categories_protect_system before update or delete on public.categories for each row execute function public.protect_system_category();
+
+-- Sistemde her zaman en az bir admin kalmasını sağlar.
+create or replace function public.protect_last_admin()
+returns trigger language plpgsql set search_path = public as $$
+begin
+  if old.role = 'admin' and new.role <> 'admin'
+     and (select count(*) from public.profiles where role = 'admin') <= 1 then
+    raise exception 'last_admin_required';
+  end if;
+  return new;
+end;
+$$;
+drop trigger if exists profiles_protect_last_admin on public.profiles;
+create trigger profiles_protect_last_admin before update of role on public.profiles for each row execute function public.protect_last_admin();
+
+-- Storage yazma alanını tanımlı klasörlerle sınırlar.
+drop policy if exists futmac_media_editor_insert on storage.objects;
+create policy futmac_media_editor_insert on storage.objects for insert to authenticated
+with check (bucket_id = 'futmac-media' and public.is_editor() and (storage.foldername(name))[1] in ('articles', 'authors', 'teams') and lower(storage.extension(name)) in ('jpg', 'jpeg', 'png', 'webp'));
+drop policy if exists futmac_media_editor_update on storage.objects;
+create policy futmac_media_editor_update on storage.objects for update to authenticated
+using (bucket_id = 'futmac-media' and public.is_editor() and (storage.foldername(name))[1] in ('articles', 'authors', 'teams'))
+with check (bucket_id = 'futmac-media' and public.is_editor() and (storage.foldername(name))[1] in ('articles', 'authors', 'teams') and lower(storage.extension(name)) in ('jpg', 'jpeg', 'png', 'webp'));
+drop policy if exists futmac_media_editor_delete on storage.objects;
+create policy futmac_media_editor_delete on storage.objects for delete to authenticated
+using (bucket_id = 'futmac-media' and public.is_editor() and (storage.foldername(name))[1] in ('articles', 'authors', 'teams'));
 
 grant select on public.authors, public.league_teams, public.standings, public.fixtures to anon, authenticated;
 grant insert, update, delete on public.authors, public.league_teams, public.standings, public.fixtures to authenticated;
