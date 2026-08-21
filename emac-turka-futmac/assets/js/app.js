@@ -238,7 +238,7 @@
     const stream = document.querySelector('.portal-stream');
     if (!stream || !data) return;
     const mainStory = stream.querySelector('.portal-main-story');
-    const localItems = data.articles.filter(function (item) { return item.local && item.status === 'published'; }).slice(0, 3);
+    const localItems = data.articles.filter(function (item) { return (item.local || item.remote) && item.status === 'published'; }).slice(0, 3);
     localItems.reverse().forEach(function (article) {
       mainStory.insertAdjacentHTML('afterend', '<article class="portal-news"><img src="' + escapeHtml(article.image) + '" alt="' + escapeHtml(article.title) + '"><div><span>YENİ · ' + escapeHtml(categoryName(article.category).toUpperCase()) + '</span><h2><a href="' + escapeHtml(article.url) + '">' + escapeHtml(article.title) + '</a></h2><p>' + escapeHtml(article.excerpt) + '</p></div></article>');
     });
