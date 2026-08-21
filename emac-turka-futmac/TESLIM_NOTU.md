@@ -24,6 +24,9 @@
 - Admin paneline yalnızca adminlerin okuyabildiği “İşlem Geçmişi” ekranı hazırlandı.
 - Supabase tarayıcı kütüphanesi lisansıyla birlikte projeye alındı; çalışma anındaki harici JavaScript CDN bağımlılığı kaldırıldı.
 - Admin ayarlarına oturum, veritabanı, işlem geçmişi, medya ayarı ve yerel kütüphane durumunu denetleyen canlı sistem kontrolü eklendi.
+- Canlı sistem kontrolü editör/admin sunucu rollerini, profil görünürlüğünü ve işlem geçmişi erişim sınırını veri değiştirmeden doğrulayacak biçimde genişletildi.
+- Yayın sonrası ekrana gerçek haber adresini açma ve kopyalama seçenekleri eklendi; taslak ve zamanlanmış içerikler yanlışlıkla paylaşılabilir gösterilmiyor.
+- Yönetim panelinden üretilen canlı haber sayfası ziyaretçi görünümüne dönüştürüldü; yönetim bağlantıları kaldırıldı ve içeriğe özgü canonical, Open Graph ve Twitter görsel bilgileri eklendi.
 
 ## Test sonucu
 
@@ -44,6 +47,8 @@
 - Admin oturum kapatma ve işlem geçmişi arayüz akışı: başarılı
 - Sahte uzantılı görsel reddi: başarılı
 - Dinamik kod çalıştırma ve ayrıcalı anahtar bulgusu: 0
+- Yayımlanmış, taslak ve zamanlanmış içerik sonuç ekranları: başarılı
+- Haber bağlantısı kopyalama ve ziyaretçi detay görünümü: başarılı
 
 ## Canlı Supabase durumu
 

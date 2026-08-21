@@ -38,6 +38,8 @@ Site `file://` ile de açılabilir. Veri katmanı JSON isteği yerine `assets/js
 - Varsayılan yerel demo: kurulum gerektirmez; içerikleri yalnızca aynı tarayıcıda saklar.
 - Supabase modu: gerçek kullanıcı girişi, ortak haber/taslak veritabanı ve kapak görseli yükleme sağlar.
 
+Bir içerik yayımlandığında panel, ziyaretçilerin açabileceği gerçek haber bağlantısını gösterir. **Yayındaki Haberi Aç** ile sayfa kontrol edilebilir; **Bağlantıyı Kopyala** ile adres doğrudan paylaşılabilir. Taslak ve ileri tarihli içeriklerde ziyaretçi bağlantısı henüz açık olmadığı için kopyalama seçeneği gösterilmez.
+
 Supabase kurulumu için `SUPABASE_KURULUM.md` dosyasını izleyin. Başlangıç şeması ve Row Level Security kuralları `supabase/migrations/001_initial.sql`; lig yönetimi şeması `supabase/migrations/002_league_management.sql`; işlem geçmişi ve üretim güvenliği `supabase/migrations/003_security_hardening.sql` içindedir. Tarayıcı bağlantısı `assets/js/supabase-config.js` dosyasından açılır. `service_role` anahtarı frontend dosyalarına kesinlikle eklenmemelidir.
 
 Supabase tarayıcı kütüphanesi `assets/vendor/supabase-2.112.3.min.js` dosyasında sabitlenmiştir; site çalışırken harici bir JavaScript CDN'ine bağlanmaz. İlgili MIT lisansı `assets/vendor/SUPABASE-LICENSE.txt` dosyasındadır.

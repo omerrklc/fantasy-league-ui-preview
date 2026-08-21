@@ -57,6 +57,12 @@
               <div class="admin-stats"><article class="admin-stat"><span>TOPLAM</span><strong data-stat-total>0</strong></article><article class="admin-stat"><span>YAYINDA</span><strong data-stat-published>0</strong></article><article class="admin-stat"><span>TASLAK</span><strong data-stat-draft>0</strong></article><article class="admin-stat"><span>KATEGORİ</span><strong data-stat-category>0</strong></article></div>
               <div class="admin-toolbar"><label class="sr-only" for="admin-search">İçeriklerde ara</label><input id="admin-search" type="search" placeholder="Başlık veya yazarda ara"><label class="sr-only" for="admin-status-filter">Yayın durumu</label><select id="admin-status-filter"><option value="all">Tüm durumlar</option><option value="published">Yayındakiler</option><option value="scheduled">Zamanlanmış</option><option value="draft">Taslaklar</option><option value="archived">Yayından kaldırılmış</option></select><label class="sr-only" for="admin-category-filter">Kategori</label><select id="admin-category-filter"><option value="all">Tüm kategoriler</option></select><button class="admin-button admin-button--gold" type="button" data-refresh-articles>YENİLE</button></div>
               <p class="admin-message" data-admin-message aria-live="polite"></p>
+              <section class="admin-publish-result" data-publish-result hidden tabindex="-1" aria-labelledby="publish-result-title">
+                <strong id="publish-result-title" data-publish-title>İçerik kaydedildi</strong>
+                <p data-publish-text></p>
+                <div class="admin-form-actions"><a class="admin-button admin-button--gold" data-publish-open href="haber-onizleme.html" target="_blank" rel="noopener">HABERİ AÇ</a><button class="admin-button" type="button" data-publish-copy>BAĞLANTIYI KOPYALA</button></div>
+                <span class="admin-copy-status" data-publish-copy-status aria-live="polite"></span>
+              </section>
               <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>BAŞLIK</th><th>KATEGORİ</th><th>YAZAR</th><th>DURUM</th><th>TARİH</th><th>İŞLEMLER</th></tr></thead><tbody data-article-table><tr><td colspan="6" class="admin-empty">Henüz yerel içerik yok.</td></tr></tbody></table></div>
 
               <section class="admin-editor" data-editor hidden aria-labelledby="editor-title">
