@@ -19,7 +19,7 @@
         return;
       }
       const script = document.createElement('script');
-      script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.3';
+      script.src = new URL('assets/vendor/supabase-2.112.3.min.js', document.baseURI).href;
       script.async = true;
       script.dataset.futmacSupabase = 'true';
       script.onload = function () { resolve(window.supabase); };
@@ -297,6 +297,22 @@
     return rows.map(function (row) { return { id:row.id, actor:row.actor_name || 'Sistem', role:row.actor_role || '', action:row.action, table:row.table_name, recordId:row.record_id || '—', createdAt:row.created_at }; });
   }
 
+  async function healthCheck() {
+    const client = await getClient();
+    const userResult = await client.auth.getUser();
+    if (userResult.error || !userResult.data.user) throw new Error('Oturum doğrulanamadı.');
+    const profile = await getProfile(userResult.data.user.id);
+    const database = await client.from('categories').select('slug').limit(1);
+    if (database.error) throw database.error;
+    let audit = 'restricted';
+    if (profile.role === 'admin') {
+      const auditResult = await client.from('audit_log').select('id').limit(1);
+      if (auditResult.error) throw auditResult.error;
+      audit = 'ready';
+    }
+    return { auth:true, database:true, audit:audit, profile:profile, library:'2.112.3-local', mediaBucket:Boolean(config.mediaBucket) };
+  }
+
   async function saveArticle(article) {
     const client = await getClient();
     const row = articleToRow(article);
@@ -342,7 +358,7 @@
     listAuthors: listAuthors, listTeams: listTeams, listStandings: listStandings, listFixtures: listFixtures,
     saveFixture: saveFixture, deleteFixture: deleteFixture, saveStanding: saveStanding, saveAuthor: saveAuthor,
     saveTeam: saveTeam, deleteTeam: deleteTeam, saveCategory: saveCategory, deleteCategory: deleteCategory,
-    listProfiles: listProfiles, saveProfile: saveProfile, listAuditLogs: listAuditLogs,
+    listProfiles: listProfiles, saveProfile: saveProfile, listAuditLogs: listAuditLogs, healthCheck: healthCheck,
     uploadImage: uploadImage
   });
 }());

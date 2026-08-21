@@ -22,6 +22,8 @@
 - Görsel yüklemede MIME bilgisine ek olarak dosya imzası kontrolü eklendi.
 - Bütün HTML sayfalarına Content Security Policy ve güvenli referrer politikası eklendi.
 - Admin paneline yalnızca adminlerin okuyabildiği “İşlem Geçmişi” ekranı hazırlandı.
+- Supabase tarayıcı kütüphanesi lisansıyla birlikte projeye alındı; çalışma anındaki harici JavaScript CDN bağımlılığı kaldırıldı.
+- Admin ayarlarına oturum, veritabanı, işlem geçmişi, medya ayarı ve yerel kütüphane durumunu denetleyen canlı sistem kontrolü eklendi.
 
 ## Test sonucu
 
