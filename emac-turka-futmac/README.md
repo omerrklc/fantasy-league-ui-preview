@@ -38,7 +38,7 @@ Site `file://` ile de açılabilir. Veri katmanı JSON isteği yerine `assets/js
 - Varsayılan yerel demo: kurulum gerektirmez; içerikleri yalnızca aynı tarayıcıda saklar.
 - Supabase modu: gerçek kullanıcı girişi, ortak haber/taslak veritabanı ve kapak görseli yükleme sağlar.
 
-Supabase kurulumu için `SUPABASE_KURULUM.md` dosyasını izleyin. Başlangıç şeması ve Row Level Security kuralları `supabase/migrations/001_initial.sql`; fikstür, puan durumu, yazar, takım ve kategori yönetimi şeması `supabase/migrations/002_league_management.sql` içindedir. Canlı projede iki güncelleme de uygulanmış ve lig yönetimi etkinleştirilmiştir. Tarayıcı bağlantısı `assets/js/supabase-config.js` dosyasından açılır. `service_role` anahtarı frontend dosyalarına kesinlikle eklenmemelidir.
+Supabase kurulumu için `SUPABASE_KURULUM.md` dosyasını izleyin. Başlangıç şeması ve Row Level Security kuralları `supabase/migrations/001_initial.sql`; lig yönetimi şeması `supabase/migrations/002_league_management.sql`; işlem geçmişi ve üretim güvenliği `supabase/migrations/003_security_hardening.sql` içindedir. Tarayıcı bağlantısı `assets/js/supabase-config.js` dosyasından açılır. `service_role` anahtarı frontend dosyalarına kesinlikle eklenmemelidir.
 
 Yazar fotoğrafları `assets/images/yazarlar/` klasöründedir:
 

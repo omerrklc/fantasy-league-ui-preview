@@ -16,6 +16,12 @@
 - JSON yedeği haberlerle birlikte kategori, yazar, takım, fikstür ve puan durumunu kapsayacak şekilde genişletildi; kullanıcı profilleri yedeğe dahil edilmedi.
 - Parola yenileme formu yalnızca geçerli Supabase oturumu doğrulandıktan sonra açılıyor.
 - Yeni şema uygulanmadan mevcut canlı haber kaydetme akışının bozulmaması için geriye uyumluluk korundu.
+- Oturum açılışta Auth sunucusundan doğrulanıyor; oturum kapandığında admin paneli anında giriş ekranına dönüyor.
+- Supabase tarayıcı kütüphanesi değişken ana sürüm yerine doğrulanan sabit sürüme bağlandı.
+- Haber ve yönetim listelerine üst sınır eklendi; gereksiz iç kullanıcı kimlikleri haber REST yanıtından çıkarıldı.
+- Görsel yüklemede MIME bilgisine ek olarak dosya imzası kontrolü eklendi.
+- Bütün HTML sayfalarına Content Security Policy ve güvenli referrer politikası eklendi.
+- Admin paneline yalnızca adminlerin okuyabildiği “İşlem Geçmişi” ekranı hazırlandı.
 
 ## Test sonucu
 
@@ -31,9 +37,16 @@
 - Eski ve yeni Supabase şeması için haber kayıt sözleşmesi: başarılı
 - Geçerli ve geçersiz parola yenileme bağlantısı durumları: başarılı
 - RLS, son-admin, sistem-kategori, takım-silme ve Storage politika kontrolleri: başarılı statik doğrulama
+- Content Security Policy kapsamı: 32/32 sayfa
+- Sabit Supabase kütüphanesinin yüklenmesi: başarılı
+- Admin oturum kapatma ve işlem geçmişi arayüz akışı: başarılı
+- Sahte uzantılı görsel reddi: başarılı
+- Dinamik kod çalıştırma ve ayrıcalı anahtar bulgusu: 0
 
 ## Canlı Supabase durumu
 
 `supabase/migrations/002_league_management.sql` canlı projeye uygulandı. `authors`, `league_teams`, `standings`, `fixtures` ve gelişmiş kategori alanları REST API üzerinden başarıyla doğrulandı. `assets/js/supabase-config.js` içindeki `leagueManagementEnabled` değeri açıldı; admin panelindeki yazar, takım, fikstür, puan durumu ve kategori araçları artık ortak canlı veritabanını kullanır.
 
 Auth URL Configuration bölümünde `sifre-yenile.html` adresi Redirect URLs listesinde tutulmalıdır.
+
+Yeni `supabase/migrations/003_security_hardening.sql` dosyası canlı projede bir kez çalıştırıldıktan sonra işlem geçmişi, haber sahiplik koruması, son admin hesabını silmeye karşı koruma ve Storage boyut/MIME sınırları sunucu tarafında etkinleşir. Dosya uygulanana kadar mevcut RLS ve yönetim işlevleri çalışmaya devam eder; admin paneli İşlem Geçmişi bölümünde kurulum notu gösterir.

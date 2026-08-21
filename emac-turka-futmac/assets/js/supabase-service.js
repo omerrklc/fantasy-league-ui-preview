@@ -2,6 +2,7 @@
   'use strict';
 
   const config = window.FUTMAC_SUPABASE_CONFIG || {};
+  const ARTICLE_FIELDS = 'id,slug,content_type,category_slug,title,excerpt,body,author_name,author_slug,image_url,image_alt,status,read_time,published_at,created_at,updated_at';
   let clientPromise = null;
 
   function enabled() {
@@ -18,7 +19,7 @@
         return;
       }
       const script = document.createElement('script');
-      script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+      script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.3';
       script.async = true;
       script.dataset.futmacSupabase = 'true';
       script.onload = function () { resolve(window.supabase); };
@@ -99,12 +100,23 @@
 
   async function getSession() {
     const client = await getClient();
-    const result = await client.auth.getSession();
+    const result = await client.auth.getUser();
     if (result.error) throw result.error;
-    if (!result.data.session) return null;
-    const profile = await getProfile(result.data.session.user.id);
+    if (!result.data.user) return null;
+    const sessionResult = await client.auth.getSession();
+    if (sessionResult.error) throw sessionResult.error;
+    if (!sessionResult.data.session) return null;
+    const profile = await getProfile(result.data.user.id);
     if (!profile || !['editor', 'admin'].includes(profile.role)) return null;
-    return { session: result.data.session, profile: profile };
+    return { session: sessionResult.data.session, profile: profile };
+  }
+
+  async function onAuthStateChange(callback) {
+    const client = await getClient();
+    const result = client.auth.onAuthStateChange(function (event, session) {
+      callback(event, session);
+    });
+    return function () { result.data.subscription.unsubscribe(); };
   }
 
   async function getProfile(userId) {
@@ -136,7 +148,9 @@
 
   async function listArticles(options) {
     const client = await getClient();
-    let query = client.from('articles').select('*').order('published_at', { ascending: false, nullsFirst: false }).order('updated_at', { ascending: false });
+    const requestedLimit = Number(options && options.limit);
+    const limit = Math.min(Math.max(Number.isFinite(requestedLimit) ? requestedLimit : (options && options.publishedOnly ? 200 : 500), 1), 500);
+    let query = client.from('articles').select(ARTICLE_FIELDS).order('published_at', { ascending: false, nullsFirst: false }).order('updated_at', { ascending: false }).limit(limit);
     if (options && options.publishedOnly) query = query.eq('status', 'published').lte('published_at', new Date().toISOString());
     const result = await query;
     if (result.error) throw result.error;
@@ -146,14 +160,14 @@
   async function listCategories() {
     const client = await getClient();
     if (config.leagueManagementEnabled !== true) {
-      const fallback = await client.from('categories').select('slug,name,description,is_active').order('name');
+      const fallback = await client.from('categories').select('slug,name,description,is_active').order('name').limit(200);
       if (fallback.error) throw fallback.error;
       return fallback.data.map(function (row) { return { id:row.slug, name:row.name, description:row.description, active:row.is_active, showInMenu:false, system:true, sortOrder:0, advanced:false }; });
     }
-    const result = await client.from('categories').select('*').order('sort_order', { ascending: true }).order('name', { ascending: true });
+    const result = await client.from('categories').select('*').order('sort_order', { ascending: true }).order('name', { ascending: true }).limit(200);
     if (result.error) {
       if (result.error.code === '42703') {
-        const fallback = await client.from('categories').select('slug,name,description,is_active').order('name');
+        const fallback = await client.from('categories').select('slug,name,description,is_active').order('name').limit(200);
         if (fallback.error) throw fallback.error;
         return fallback.data.map(function (row) { return { id:row.slug, name:row.name, description:row.description, active:row.is_active, showInMenu:false, system:true, sortOrder:0, advanced:false }; });
       }
@@ -171,7 +185,7 @@
 
   async function listAuthors() {
     const client = await getClient();
-    const rows = optionalRows(await client.from('authors').select('*').order('sort_order').order('name'));
+    const rows = optionalRows(await client.from('authors').select('*').order('sort_order').order('name').limit(200));
     if (rows === null) return null;
     return rows.map(function (row) {
       const profiles = { furkan:'yazar-furkan.html', eray:'yazar-eray.html', berkay:'yazar-berkay.html' };
@@ -181,14 +195,14 @@
 
   async function listTeams() {
     const client = await getClient();
-    const rows = optionalRows(await client.from('league_teams').select('*').order('sort_order').order('name'));
+    const rows = optionalRows(await client.from('league_teams').select('*').order('sort_order').order('name').limit(200));
     if (rows === null) return null;
     return rows.map(function (row) { return { id: row.id, name: row.name, manager: row.manager, shortName: row.short_name || '', logo: row.logo_url || 'assets/images/logo/emac-turka-transparent.png', active: row.is_active, sortOrder: row.sort_order }; });
   }
 
   async function listStandings() {
     const client = await getClient();
-    const rows = optionalRows(await client.from('standings').select('team_id,played,won,drawn,lost,fantasy_points,league_points,movement,form,updated_at,team:league_teams!standings_team_id_fkey(id,name,manager,sort_order)'));
+    const rows = optionalRows(await client.from('standings').select('team_id,played,won,drawn,lost,fantasy_points,league_points,movement,form,updated_at,team:league_teams!standings_team_id_fkey(id,name,manager,sort_order)').limit(200));
     if (rows === null) return null;
     rows.sort(function (a, b) { return b.league_points - a.league_points || b.fantasy_points - a.fantasy_points || (a.team.sort_order || 0) - (b.team.sort_order || 0); });
     return rows.map(function (row, index) { return { rank: index + 1, teamId: row.team_id, team: row.team.name, manager: row.team.manager, played: row.played, won: row.won, drawn: row.drawn, lost: row.lost, fantasy: row.fantasy_points, points: row.league_points, change: row.movement, form: row.form || [], updatedAt: row.updated_at }; });
@@ -196,7 +210,7 @@
 
   async function listFixtures() {
     const client = await getClient();
-    const rows = optionalRows(await client.from('fixtures').select('id,week,kickoff_at,status,home_score,away_score,home:league_teams!fixtures_home_team_id_fkey(id,name),away:league_teams!fixtures_away_team_id_fkey(id,name)').order('week').order('kickoff_at'));
+    const rows = optionalRows(await client.from('fixtures').select('id,week,kickoff_at,status,home_score,away_score,home:league_teams!fixtures_home_team_id_fkey(id,name),away:league_teams!fixtures_away_team_id_fkey(id,name)').order('week').order('kickoff_at').limit(1000));
     if (rows === null) return null;
     const weeks = {};
     rows.forEach(function (row) {
@@ -264,7 +278,7 @@
 
   async function listProfiles() {
     const client = await getClient();
-    const result = await client.from('profiles').select('id,display_name,role,updated_at').order('display_name');
+    const result = await client.from('profiles').select('id,display_name,role,updated_at').order('display_name').limit(200);
     if (result.error) throw result.error;
     return result.data.map(function (row) { return { id:row.id, name:row.display_name, role:row.role, updatedAt:row.updated_at }; });
   }
@@ -276,12 +290,19 @@
     return result.data;
   }
 
+  async function listAuditLogs() {
+    const client = await getClient();
+    const rows = optionalRows(await client.from('audit_log').select('id,actor_name,actor_role,action,table_name,record_id,created_at').order('created_at', { ascending:false }).limit(200));
+    if (rows === null) return null;
+    return rows.map(function (row) { return { id:row.id, actor:row.actor_name || 'Sistem', role:row.actor_role || '', action:row.action, table:row.table_name, recordId:row.record_id || '—', createdAt:row.created_at }; });
+  }
+
   async function saveArticle(article) {
     const client = await getClient();
     const row = articleToRow(article);
     const result = row.id
-      ? await client.from('articles').update(row).eq('id', row.id).select().single()
-      : await client.from('articles').insert(row).select().single();
+      ? await client.from('articles').update(row).eq('id', row.id).select(ARTICLE_FIELDS).single()
+      : await client.from('articles').insert(row).select(ARTICLE_FIELDS).single();
     if (result.error) throw result.error;
     return rowToArticle(result.data);
   }
@@ -296,6 +317,11 @@
     const allowed = ['image/jpeg', 'image/png', 'image/webp'];
     if (!file || !allowed.includes(file.type)) throw new Error('Yalnızca JPG, PNG veya WebP görsel yüklenebilir.');
     if (file.size > 5 * 1024 * 1024) throw new Error('Görsel 5 MB sınırını aşıyor.');
+    const bytes = new Uint8Array(await file.slice(0, 12).arrayBuffer());
+    const jpeg = bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff;
+    const png = bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47 && bytes[4] === 0x0d && bytes[5] === 0x0a && bytes[6] === 0x1a && bytes[7] === 0x0a;
+    const webp = String.fromCharCode.apply(null, bytes.slice(0, 4)) === 'RIFF' && String.fromCharCode.apply(null, bytes.slice(8, 12)) === 'WEBP';
+    if ((file.type === 'image/jpeg' && !jpeg) || (file.type === 'image/png' && !png) || (file.type === 'image/webp' && !webp)) throw new Error('Dosya uzantısı ile gerçek görsel biçimi uyuşmuyor.');
     const client = await getClient();
     const userResult = await client.auth.getUser();
     if (userResult.error || !userResult.data.user) throw new Error('Görsel yüklemek için yeniden giriş yapın.');
@@ -310,13 +336,13 @@
 
   window.FUTMAC_SUPABASE = Object.freeze({
     enabled: enabled(), leagueManagementEnabled: config.leagueManagementEnabled === true,
-    getClient: getClient, getSession: getSession, signIn: signIn,
+    getClient: getClient, getSession: getSession, onAuthStateChange: onAuthStateChange, signIn: signIn,
     signOut: signOut, requestPasswordReset: requestPasswordReset, updatePassword: updatePassword,
     listArticles: listArticles, saveArticle: saveArticle, deleteArticle: deleteArticle, listCategories: listCategories,
     listAuthors: listAuthors, listTeams: listTeams, listStandings: listStandings, listFixtures: listFixtures,
     saveFixture: saveFixture, deleteFixture: deleteFixture, saveStanding: saveStanding, saveAuthor: saveAuthor,
     saveTeam: saveTeam, deleteTeam: deleteTeam, saveCategory: saveCategory, deleteCategory: deleteCategory,
-    listProfiles: listProfiles, saveProfile: saveProfile,
+    listProfiles: listProfiles, saveProfile: saveProfile, listAuditLogs: listAuditLogs,
     uploadImage: uploadImage
   });
 }());
