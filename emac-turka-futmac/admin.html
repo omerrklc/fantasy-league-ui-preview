@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="tr">
-<head>
+<head><meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; connect-src 'self' https://pwmwymvnyfvrumlizbuw.supabase.co wss://pwmwymvnyfvrumlizbuw.supabase.co; img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests"><meta name="referrer" content="strict-origin-when-cross-origin">
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex,nofollow"><meta name="description" content="FUTMAC içerik ve lig yönetim paneli.">
   <title>Yönetim Paneli | FUTMAC</title>
@@ -28,7 +28,7 @@
         <p data-login-description>Yönetim paneline erişmek için bilgilerinizi girin.</p>
         <form data-login-form class="admin-login-grid">
           <div class="admin-field"><label for="admin-email">E-posta</label><input id="admin-email" name="email" type="email" autocomplete="username" required placeholder="yonetici@ornek.com"></div>
-          <div class="admin-field"><label for="admin-password">Parola</label><input id="admin-password" name="password" type="password" autocomplete="current-password" minlength="6" required placeholder="En az 6 karakter"><small data-password-note>Bağlantı türü kontrol ediliyor.</small></div>
+        <div class="admin-field"><label for="admin-password">Parola</label><input id="admin-password" name="password" type="password" autocomplete="current-password" minlength="8" required placeholder="En az 8 karakter"><small data-password-note>Bağlantı türü kontrol ediliyor.</small></div>
           <button class="admin-button" type="submit" data-login-button>GİRİŞ YAP</button>
           <button class="admin-link-button" type="button" data-forgot-password hidden>ŞİFREMİ UNUTTUM</button>
           <p class="admin-message" data-login-message aria-live="polite"></p>
@@ -46,6 +46,7 @@
             <button type="button" data-panel="teams" data-admin-only>Takımlar</button>
             <button type="button" data-panel="categories" data-admin-only>Kategoriler</button>
             <button type="button" data-panel="users" data-admin-only>Kullanıcı Yetkileri</button>
+            <button type="button" data-panel="audit" data-admin-only>İşlem Geçmişi</button>
             <button type="button" data-panel="settings">Ayarlar / Backend</button>
             <small data-sidebar-mode>Bağlantı türü kontrol ediliyor.</small>
           </nav>
@@ -88,6 +89,7 @@
             <section data-panel-view="teams" hidden><div class="admin-section-head"><div><h2>Takımlar</h2><p>Lig takımlarını, yöneticileri ve armaları yönetin.</p></div><a class="admin-button admin-button--gold" href="puan-durumu.html" target="_blank" rel="noopener">LİGİ GÖR</a></div><p class="admin-message" data-team-message aria-live="polite"></p><div data-team-module><div class="admin-placeholder">Takım verileri kontrol ediliyor…</div></div></section>
             <section data-panel-view="categories" hidden><div class="admin-section-head"><div><h2>Kategoriler</h2><p>İçerik sınıflarını ve menü görünürlüğünü yönetin.</p></div></div><p class="admin-message" data-category-message aria-live="polite"></p><div data-category-module><div class="admin-placeholder">Kategori verileri kontrol ediliyor…</div></div></section>
             <section data-panel-view="users" hidden><div class="admin-section-head"><div><h2>Kullanıcı Yetkileri</h2><p>Viewer, editör ve admin rollerini yönetin.</p></div></div><p class="admin-message" data-user-message aria-live="polite"></p><div data-user-module><div class="admin-placeholder">Kullanıcı yetkileri kontrol ediliyor…</div></div></section>
+            <section data-panel-view="audit" hidden><div class="admin-section-head"><div><h2>İşlem Geçmişi</h2><p>Yönetim panelinde yapılan son 200 veritabanı değişikliğini inceleyin.</p></div></div><p class="admin-message" data-audit-message aria-live="polite"></p><div data-audit-module><div class="admin-placeholder">İşlem kayıtları kontrol ediliyor…</div></div></section>
             <section data-panel-view="settings" hidden><div class="admin-placeholder"><h3 data-settings-title>Backend bağlantı durumu</h3><p data-settings-status>Bağlantı kontrol ediliyor.</p><ul><li>Supabase Auth: gerçek yönetici oturumu</li><li>PostgreSQL: ortak haber ve taslak verileri</li><li>Storage: kapak görselleri</li><li>RLS: editör/admin rolüne göre yazma yetkisi</li></ul><a class="admin-button" href="SUPABASE_KURULUM.md" target="_blank" rel="noopener">KURULUM REHBERİ</a></div><div class="admin-placeholder admin-settings-block"><h3>Yedekleme ve aktarım</h3><p>İçerik ve lig verilerinin taşınabilir JSON yedeğini indirin. Kullanıcı profilleri yedeğe eklenmez. İçe aktarma yalnızca yerel demo modunda kullanılabilir; canlı Supabase verileri sunucu yetkileriyle korunur.</p><div class="admin-form-actions"><button class="admin-button admin-button--gold" type="button" data-export>TAM JSON YEDEĞİNİ İNDİR</button><label class="admin-button" for="admin-import" data-import-label>YEDEKTEN İÇE AKTAR</label><input class="sr-only" id="admin-import" type="file" accept="application/json"></div></div></section>
           </div>
         </div>

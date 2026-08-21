@@ -2,7 +2,8 @@
 
 1. Supabase üzerinde yeni bir proje oluşturun.
 2. SQL Editor bölümünde `supabase/migrations/001_initial.sql` dosyasının tamamını çalıştırın.
-   Ardından fikstür, puan durumu, yazar, takım, kategori, gelişmiş yayın durumu ve rol koruması için `supabase/migrations/002_league_management.sql` dosyasının tamamını çalıştırın. İşlem başarılı olduktan ve `authors`, `league_teams`, `standings`, `fixtures` tabloları göründükten sonra `assets/js/supabase-config.js` içindeki `leagueManagementEnabled` değerini `true` yapın. İki SQL dosyası da tekrar çalıştırmaya karşı güvenli hazırlanmıştır.
+   Ardından fikstür, puan durumu, yazar, takım, kategori, gelişmiş yayın durumu ve rol koruması için `supabase/migrations/002_league_management.sql` dosyasının tamamını çalıştırın. İşlem başarılı olduktan ve `authors`, `league_teams`, `standings`, `fixtures` tabloları göründükten sonra `assets/js/supabase-config.js` içindeki `leagueManagementEnabled` değerini `true` yapın.
+   Son olarak işlem geçmişi, sahiplik koruması ve Storage sınırları için `supabase/migrations/003_security_hardening.sql` dosyasının tamamını çalıştırın. Üç SQL dosyası da tekrar çalıştırmaya karşı güvenli hazırlanmıştır.
 3. Authentication > Users bölümünden yönetici kullanıcısını oluşturun.
 4. SQL Editor içinde aşağıdaki komutu, kullanıcının e-posta adresini değiştirerek çalıştırın:
 
@@ -25,6 +26,8 @@ where id = (select id from auth.users where email = 'yonetici@example.com');
 - Yeni kullanıcılar otomatik olarak `viewer` olur. Editör veya admin rolü ayrıca veritabanından verilmelidir.
 - Canlıya geçmeden önce Auth ayarlarından e-posta doğrulama ve parola politikasını kontrol edin.
 - `leagueManagementEnabled` yalnızca ikinci SQL dosyası hatasız tamamlandıktan sonra açılmalıdır. Aksi halde canlı site sabit lig verilerini kullanmaya devam etmelidir.
+- Üçüncü SQL dosyası son admin hesabının silinmesini engeller, haber sahiplik alanlarını korur ve adminlere salt okunur işlem geçmişi sunar.
+- GitHub Pages özel HTTP güvenlik başlıkları ekleyemediği için sayfalarda Content Security Policy ve referrer politikası meta etiketleriyle uygulanır.
 
 ## Yedekleme
 
