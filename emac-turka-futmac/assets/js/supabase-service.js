@@ -301,16 +301,35 @@
     const client = await getClient();
     const userResult = await client.auth.getUser();
     if (userResult.error || !userResult.data.user) throw new Error('Oturum doğrulanamadı.');
-    const profile = await getProfile(userResult.data.user.id);
+    const userId = userResult.data.user.id;
+    const profile = await getProfile(userId);
     const database = await client.from('categories').select('slug').limit(1);
     if (database.error) throw database.error;
-    let audit = 'restricted';
-    if (profile.role === 'admin') {
-      const auditResult = await client.from('audit_log').select('id').limit(1);
-      if (auditResult.error) throw auditResult.error;
-      audit = 'ready';
-    }
-    return { auth:true, database:true, audit:audit, profile:profile, library:'2.112.3-local', mediaBucket:Boolean(config.mediaBucket) };
+    const editorPermission = await client.rpc('is_editor');
+    if (editorPermission.error) throw editorPermission.error;
+    const adminPermission = await client.rpc('is_admin');
+    if (adminPermission.error) throw adminPermission.error;
+    const isAdmin = profile.role === 'admin';
+    if (editorPermission.data !== true || Boolean(adminPermission.data) !== isAdmin) throw new Error('Sunucu rolü ile profil rolü uyuşmuyor.');
+    const visibleProfiles = await client.from('profiles').select('id').limit(200);
+    if (visibleProfiles.error) throw visibleProfiles.error;
+    const profileRows = visibleProfiles.data || [];
+    const profileScopeValid = isAdmin
+      ? profileRows.some(function (row) { return row.id === userId; })
+      : profileRows.length === 1 && profileRows[0].id === userId;
+    if (!profileScopeValid) throw new Error('Profil görünürlüğü güvenlik sınırıyla uyuşmuyor.');
+    const auditResult = await client.from('audit_log').select('id').limit(1);
+    if (auditResult.error) throw auditResult.error;
+    if (!isAdmin && (auditResult.data || []).length) throw new Error('Editör hesabı işlem geçmişini görmemelidir.');
+    return {
+      auth:true,
+      database:true,
+      audit:isAdmin ? 'ready' : 'protected',
+      profile:profile,
+      permissions:{ editor:true, admin:isAdmin, profileScope:isAdmin ? 'all' : 'self' },
+      library:'2.112.3-local',
+      mediaBucket:Boolean(config.mediaBucket)
+    };
   }
 
   async function saveArticle(article) {
