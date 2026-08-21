@@ -33,12 +33,12 @@ Site `file://` ile de açılabilir. Veri katmanı JSON isteği yerine `assets/js
 
 ## Admin paneli
 
-`admin.html` ekranında haber/köşe yazısı ekleme, düzenleme, silme, arama ve filtreleme, taslak/yayın/zamanlama/yayından kaldırma, kart önizlemesi, parola sıfırlama ve yedekleme araçları bulunur. İkinci veritabanı güncellemesi etkinleştirildiğinde aynı panelden fikstür, puan durumu, yazarlar, takımlar, kategoriler ve kullanıcı rolleri de yönetilir. Panel iki çalışma biçimini destekler:
+`admin.html` ekranında haber/köşe yazısı ekleme, düzenleme, silme, arama ve filtreleme, taslak/yayın/zamanlama/yayından kaldırma, kart önizlemesi, parola sıfırlama ve yedekleme araçları bulunur. Aynı panelden fikstür, puan durumu, yazarlar, takımlar, kategoriler ve kullanıcı rolleri de yönetilir. Panel iki çalışma biçimini destekler:
 
 - Varsayılan yerel demo: kurulum gerektirmez; içerikleri yalnızca aynı tarayıcıda saklar.
 - Supabase modu: gerçek kullanıcı girişi, ortak haber/taslak veritabanı ve kapak görseli yükleme sağlar.
 
-Supabase kurulumu için `SUPABASE_KURULUM.md` dosyasını izleyin. Başlangıç şeması ve Row Level Security kuralları `supabase/migrations/001_initial.sql`; fikstür, puan durumu ve yazar yönetimi şeması `supabase/migrations/002_league_management.sql` içindedir. İkinci migrasyon uygulanana kadar bu üç bölüm sabit örnek verilerle çalışmaya devam eder. Tarayıcı bağlantısı `assets/js/supabase-config.js` dosyasından açılır. `service_role` anahtarı frontend dosyalarına kesinlikle eklenmemelidir.
+Supabase kurulumu için `SUPABASE_KURULUM.md` dosyasını izleyin. Başlangıç şeması ve Row Level Security kuralları `supabase/migrations/001_initial.sql`; fikstür, puan durumu, yazar, takım ve kategori yönetimi şeması `supabase/migrations/002_league_management.sql` içindedir. Canlı projede iki güncelleme de uygulanmış ve lig yönetimi etkinleştirilmiştir. Tarayıcı bağlantısı `assets/js/supabase-config.js` dosyasından açılır. `service_role` anahtarı frontend dosyalarına kesinlikle eklenmemelidir.
 
 Yazar fotoğrafları `assets/images/yazarlar/` klasöründedir:
 

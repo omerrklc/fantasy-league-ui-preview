@@ -6,7 +6,7 @@
   // hiçbir koşulda bu dosyaya veya başka bir frontend dosyasına yazmayın.
   window.FUTMAC_SUPABASE_CONFIG = Object.freeze({
   enabled: true,
-  leagueManagementEnabled: false,
+  leagueManagementEnabled: true,
   url: 'https://pwmwymvnyfvrumlizbuw.supabase.co',
     publishableKey: 'sb_publishable_yOZqUUh7u78n7cTFetzWKQ_qn-Oa2mc',
     mediaBucket: 'futmac-media'
